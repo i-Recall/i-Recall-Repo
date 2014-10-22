@@ -107,6 +107,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        menu.findItem(R.id.action_new_deck).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -170,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
             getSupportActionBar().setTitle(mTitle);
         }
         else{
-            Log.e(LOG_TAG, "Either title is null of ActionBar is null");
+            Log.e(LOG_TAG, "Either title is null or ActionBar is null");
         }
     }
 }
