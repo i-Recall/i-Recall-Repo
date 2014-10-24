@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
-
+import android.support.v7.widget.Toolbar;
 
 
 public class EditDeckActivity extends ActionBarActivity {
@@ -28,6 +28,10 @@ public class EditDeckActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_deck);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_edit_deck);
+        setSupportActionBar(toolbar);
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new EditDeckFragment(), TAG_FRAGMENT)
