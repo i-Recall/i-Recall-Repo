@@ -18,5 +18,7 @@
     <string name="hint_deck_name">Deck Name</string>
     <string name="dialog_save_message">Would you like to save changes?</string>
     <string name="dialog_button_save">Save</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
 
 </resources>
