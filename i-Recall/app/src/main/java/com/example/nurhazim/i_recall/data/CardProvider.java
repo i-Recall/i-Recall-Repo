@@ -19,6 +19,7 @@ public class CardProvider extends ContentProvider {
 
     private static final int DECK = 100;
     private static final int DECK_WITH_NAME = 101;
+    private static final int DECK_WITH_ID = 102;
     private static final int CARD = 300;
     private static final int CARD_WITH_DECK_ID = 301;
     //private static final int CARD_WITH_CARD_ID = 302;
@@ -43,6 +44,9 @@ public class CardProvider extends ContentProvider {
     private static final String sDeckWithNameSelection =
             CardsContract.DeckEntry.TABLE_NAME +
                     "." + CardsContract.DeckEntry.COLUMN_DECK_NAME + " = ? ";
+    private static final String sDeckWithID =
+            CardsContract.DeckEntry.TABLE_NAME +
+                    "." + CardsContract.DeckEntry._ID + " = ?";
     private static final String sCardWithID =
             CardsContract.CardEntry.TABLE_NAME +
                     "." + CardsContract.CardEntry.COLUMN_DECK_KEY + " = ? ";
@@ -59,6 +63,20 @@ public class CardProvider extends ContentProvider {
                 null,
                 null,
                 sortOder);
+    }
+
+    private Cursor getDecksWithID(Uri uri, String[] projection, String sortOrder){
+        String[] selectionArgs = new String[]{CardsContract.DeckEntry.getIdFromUri(uri)};
+
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.DeckEntry.TABLE_NAME,
+                projection,
+                sDeckWithID,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
     }
 
     private Cursor getCardsWithID(Uri uri, String[] projection, String sortOrder){
@@ -83,6 +101,7 @@ public class CardProvider extends ContentProvider {
         final String authority = CardsContract.CONTENT_AUTHORITY;
 
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK, DECK);
+        sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/#", DECK_WITH_ID);
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/*", DECK_WITH_NAME);
 
         sURIMatcher.addURI(authority, CardsContract.PATH_CARD, CARD);
@@ -104,6 +123,9 @@ public class CardProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)){
             case DECK_WITH_NAME:
                 retCursor = getDeckWithName(uri, projection, sortOrder);
+                break;
+            case DECK_WITH_ID:
+                retCursor = getCardsWithID(uri, projection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -143,6 +165,8 @@ public class CardProvider extends ContentProvider {
 
         switch(match){
             case DECK_WITH_NAME:
+                return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
+            case DECK_WITH_ID:
                 return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
             case DECK:
                 return CardsContract.DeckEntry.CONTENT_TYPE;

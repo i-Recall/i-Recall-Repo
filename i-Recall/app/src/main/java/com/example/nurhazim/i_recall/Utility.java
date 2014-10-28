@@ -21,4 +21,16 @@ public class Utility {
         cursor.moveToFirst();
         return cursor.getLong(cursor.getColumnIndex(CardsContract.DeckEntry._ID));
     }
+
+    public static String getDeckName(Context context, long ID){
+        Cursor cursor = context.getContentResolver().query(
+                CardsContract.DeckEntry.buildDeckWithId(ID),
+                null,
+                null,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        return cursor.getString(cursor.getColumnIndex(CardsContract.DeckEntry.COLUMN_DECK_NAME));
+    }
 }
