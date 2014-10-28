@@ -5,12 +5,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -110,6 +113,7 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
                     .setPositiveButton(R.string.dialog_button_save, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            UpdateData();
                             getActivity().finish();
                         }
                     })
@@ -125,6 +129,52 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         }
         else{
             return true;
+        }
+    }
+
+    private void UpdateData(){
+        EditText editDeckName = (EditText) getActivity().findViewById(R.id.edit_deck_name_text);
+
+        if(!editDeckName.getText().toString().equals(mCurrentDeck)){
+            ContentValues updatedDeck = new ContentValues();
+            updatedDeck.put(CardsContract.DeckEntry.COLUMN_DECK_NAME, editDeckName.getText().toString());
+
+            getActivity().getContentResolver().update(
+                    CardsContract.DeckEntry.CONTENT_URI,
+                    updatedDeck,
+                    CardsContract.DeckEntry._ID + " = ?",
+                    new String[]{String.valueOf(Utility.getDeckId(getActivity(), mCurrentDeck))}
+            );
+            mCurrentDeck = editDeckName.getText().toString();
+            //change the SingleDeckFragment Toolbar title to new edited deck name
+        }
+
+//            mCardAdapter.mCursor = getActivity().getContentResolver().query(
+//                    CardsContract.CardEntry.buildCardWithDeckID(Utility.getDeckId(getActivity(), mCurrentDeck)),
+//                    CARD_COLUMNS,
+//                    null,
+//                    null,
+//                    null
+//            );
+        mCardAdapter.getCursor().moveToFirst();
+        for(int i = 0; i < mCardAdapter.getCount(); i++){
+            LinearLayout listViewItem = (LinearLayout) mCardAdapter.getItem(i);
+            EditText editTerm = (EditText) listViewItem.findViewById(R.id.edit_card_term);
+            EditText editDescription = (EditText) listViewItem.findViewById(R.id.edit_card_description);
+
+            ContentValues updatedCard = new ContentValues();
+            updatedCard.put(CardsContract.CardEntry.COLUMN_TERM, editTerm.getText().toString());
+            updatedCard.put(CardsContract.CardEntry.COLUMN_DESCRIPTION, editDescription.getText().toString());
+
+            long cardId = mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID));
+
+            getActivity().getContentResolver().update(
+                    CardsContract.CardEntry.CONTENT_URI,
+                    updatedCard,
+                    CardsContract.CardEntry._ID + " = ?",
+                    new String[]{String.valueOf(cardId)}
+            );
+            mCardAdapter.getCursor().moveToNext();
         }
     }
 
@@ -164,16 +214,6 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
             mEditDescription.addTextChangedListener(new SimpleTextWatcher(mEditDescription));
 
             return view;
-        }
-    }
-
-    public static class ViewHolder{
-        public final EditText editTerm;
-        public final EditText editDescription;
-
-        public ViewHolder(View view){
-            editTerm = (EditText) view.findViewById(R.id.edit_card_term);
-            editDescription = (EditText) view.findViewById(R.id.edit_card_description);
         }
     }
 
