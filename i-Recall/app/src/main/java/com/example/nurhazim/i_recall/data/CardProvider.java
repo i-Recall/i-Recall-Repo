@@ -1,7 +1,6 @@
 package com.example.nurhazim.i_recall.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -66,7 +65,7 @@ public class CardProvider extends ContentProvider {
                 sortOder);
     }
 
-    private Cursor getDecksWithID(Uri uri, String[] projection, String sortOrder){
+    private Cursor getDeckWithID(Uri uri, String[] projection, String sortOrder){
         String[] selectionArgs = new String[]{CardsContract.DeckEntry.getIdFromUri(uri)};
 
         return mOpenHelper.getReadableDatabase().query(
@@ -126,7 +125,7 @@ public class CardProvider extends ContentProvider {
                 retCursor = getDeckWithName(uri, projection, sortOrder);
                 break;
             case DECK_WITH_ID:
-                retCursor = getCardsWithID(uri, projection, sortOrder);
+                retCursor = getDeckWithID(uri, projection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(
