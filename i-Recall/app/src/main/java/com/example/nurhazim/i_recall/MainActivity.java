@@ -1,10 +1,7 @@
 package com.example.nurhazim.i_recall;
 
-import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -12,17 +9,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -37,6 +29,9 @@ public class MainActivity extends ActionBarActivity {
 
     private static final int NAV_ALL_DECKS = 0;
     private static final int NAV_BACKUP = 1;
+    private static final int NAV_SEARCH = 2;
+    private static final int NAV_IMPORT = 3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +102,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_new_deck).setVisible(!drawerOpen);
+        if(menu.findItem(R.id.action_new_deck)!=null) {
+            menu.findItem(R.id.action_new_deck) .setVisible(!drawerOpen);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -149,6 +146,12 @@ public class MainActivity extends ActionBarActivity {
                 fragment = new DecksFragment();
                 break;
             case NAV_BACKUP:
+                fragment = null;
+                break;
+            case NAV_SEARCH:
+                fragment = null;
+                break;
+            case NAV_IMPORT:
                 fragment = null;
                 break;
             default:
