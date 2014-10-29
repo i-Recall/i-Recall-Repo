@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -66,7 +70,7 @@ public class SingleDeckFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_deck, container, false);
-        ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
+        final ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
 
         Intent intent = getActivity().getIntent();
         if(intent != null && intent.hasExtra(DECK_NAME_KEY)){
@@ -95,6 +99,15 @@ public class SingleDeckFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    private void toggleSelection(ListView list, int position){
+        if(list.isItemChecked(position)){
+            list.setItemChecked(position, false);
+        }
+        else {
+            list.setItemChecked(position, true);
+        }
     }
 
     private Cursor getCards(){

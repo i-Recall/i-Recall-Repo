@@ -56,7 +56,8 @@ public class CardProvider extends ContentProvider {
         String[] selectionArgs = new String[]{CardsContract.DeckEntry.getNameFromUri(uri)};
         Log.v(LOG_TAG, "getting decks with name: " + CardsContract.DeckEntry.getNameFromUri(uri));
 
-        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.DeckEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,

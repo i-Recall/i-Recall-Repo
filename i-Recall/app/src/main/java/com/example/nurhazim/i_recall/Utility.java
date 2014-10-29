@@ -33,4 +33,10 @@ public class Utility {
         cursor.moveToFirst();
         return cursor.getString(cursor.getColumnIndex(CardsContract.DeckEntry.COLUMN_DECK_NAME));
     }
+
+    public static boolean hasNewLine(CharSequence charSequence){
+        String newline = System.getProperty("line.separator");
+        String string = String.valueOf(charSequence);
+        return string.contains(newline);
+    }
 }

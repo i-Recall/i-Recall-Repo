@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -28,6 +29,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
+
+import java.util.Vector;
 
 /**
  * Created by NurHazim on 17-Oct-14.
@@ -68,6 +71,10 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
             mCurrentDeck = intent.getStringExtra(SingleDeckFragment.DECK_NAME_KEY);
             populateDeckAndCards(rootView);
         }
+        EditText newDescription = (EditText) rootView.findViewById(R.id.new_card_description);
+        newDescription.addTextChangedListener(new SimpleTextWatcher(newDescription));
+
+        setHasOptionsMenu(true);
         return rootView;
     }
 
@@ -154,6 +161,34 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    private void DeleteCards(Vector<Long> id){
+        for(Long cardId : id){
+            getActivity().getContentResolver().delete(
+                    CardsContract.CardEntry.CONTENT_URI,
+                    CardsContract.CardEntry._ID + " = ?",
+                    new String[]{String.valueOf(cardId)}
+            );
+        }
+    }
+
+    private void addNewCard(){
+        EditText newTerm = (EditText) getActivity().findViewById(R.id.new_card_term);
+        EditText newDescription = (EditText) getActivity().findViewById(R.id.new_card_description);
+
+        ContentValues newCard = new ContentValues();
+        newCard.put(CardsContract.CardEntry.COLUMN_TERM, newTerm.getText().toString().trim());
+        newCard.put(CardsContract.CardEntry.COLUMN_DESCRIPTION, newDescription.getText().toString().trim());
+        newCard.put(CardsContract.CardEntry.COLUMN_DECK_KEY, Utility.getDeckId(getActivity(), mCurrentDeck));
+
+        getActivity().getContentResolver().insert(
+                CardsContract.CardEntry.CONTENT_URI,
+                newCard
+        );
+
+        newTerm.setText("");
+        newDescription.setText("");
+    }
+
     private void UpdateCards(){
         if(mCardEdited) {
             Log.v(LOG_TAG, "Updating Cards");
@@ -164,11 +199,11 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
                 EditText editTerm = (EditText) listViewItem.findViewById(R.id.edit_card_term);
                 EditText editDescription = (EditText) listViewItem.findViewById(R.id.edit_card_description);
 
+                long cardId = mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID));
+
                 ContentValues updatedCard = new ContentValues();
                 updatedCard.put(CardsContract.CardEntry.COLUMN_TERM, editTerm.getText().toString());
                 updatedCard.put(CardsContract.CardEntry.COLUMN_DESCRIPTION, editDescription.getText().toString());
-
-                long cardId = mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID));
 
                 getActivity().getContentResolver().update(
                         CardsContract.CardEntry.CONTENT_URI,
@@ -249,6 +284,11 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
                 case R.id.edit_card_term:
                 case R.id.edit_card_description:
                     mCardEdited = true;
+                    break;
+                case R.id.new_card_description:
+                    if(Utility.hasNewLine(s)){
+                        addNewCard();
+                    }
                     break;
             }
         }
