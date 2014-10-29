@@ -5,19 +5,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import com.example.nurhazim.i_recall.R;
 import com.example.nurhazim.i_recall.data.CardsContract;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 /**
  * Created by NurHazim on 16-Oct-14.
@@ -26,7 +26,8 @@ public class SingleDeckFragment extends Fragment {
     private static final String LOG_TAG = SingleDeckFragment.class.getSimpleName();
 
     public static final String DECK_NAME_KEY = "deck_name";
-    private String mCurrentDeck;
+    private String mCurrentDeckName;
+    private long mCurrentDeckId;
     private SimpleCursorAdapter mCardAdapter;
 
     public SingleDeckFragment() {
@@ -39,11 +40,26 @@ public class SingleDeckFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mCurrentDeckName = Utility.getDeckName(getActivity(), mCurrentDeckId);
+        getActivity().setTitle(mCurrentDeckName);
+        Cursor cursor = getActivity().getContentResolver().query(
+                CardsContract.CardEntry.buildCardWithDeckID(mCurrentDeckId),
+                null,
+                null,
+                null,
+                null
+        );
+        mCardAdapter.swapCursor(cursor);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.action_edit_deck){
             Intent intent = new Intent(getActivity(), EditDeckActivity.class);
-            intent.putExtra(DECK_NAME_KEY, mCurrentDeck);
+            intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
             startActivity(intent);
             return true;
         }
@@ -54,13 +70,14 @@ public class SingleDeckFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_deck, container, false);
-        ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
+        final ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
 
         Intent intent = getActivity().getIntent();
         if(intent != null && intent.hasExtra(DECK_NAME_KEY)){
-            mCurrentDeck = intent.getStringExtra(DECK_NAME_KEY);
-            Log.v(LOG_TAG, "Current deck is " + mCurrentDeck);
-            getActivity().setTitle(mCurrentDeck);
+            mCurrentDeckName = intent.getStringExtra(DECK_NAME_KEY);
+            mCurrentDeckId = Utility.getDeckId(getActivity(), mCurrentDeckName);
+            Log.v(LOG_TAG, "Current deck is " + mCurrentDeckName);
+            getActivity().setTitle(mCurrentDeckName);
             Cursor cursor = getCards();
             if(cursor != null){
                 mCardAdapter = new SimpleCursorAdapter(
@@ -84,10 +101,19 @@ public class SingleDeckFragment extends Fragment {
         return rootView;
     }
 
+    private void toggleSelection(ListView list, int position){
+        if(list.isItemChecked(position)){
+            list.setItemChecked(position, false);
+        }
+        else {
+            list.setItemChecked(position, true);
+        }
+    }
+
     private Cursor getCards(){
         long rowId;
         Cursor deckCursor = getActivity().getContentResolver().query(
-                CardsContract.DeckEntry.buildDeckWithName(mCurrentDeck),
+                CardsContract.DeckEntry.buildDeckWithName(mCurrentDeckName),
                 null,
                 null,
                 null,
