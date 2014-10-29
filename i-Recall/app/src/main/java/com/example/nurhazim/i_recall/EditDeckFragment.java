@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +33,12 @@ import com.example.nurhazim.i_recall.data.CardsContract;
  * Created by NurHazim on 17-Oct-14.
  */
 public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String LOG_TAG = EditDeckFragment.class.getSimpleName();
 
     private String mCurrentDeck;
     private CardsAdapter mCardAdapter;
-    private boolean mEdited = false;
+    private boolean mTitleEdited = false;
+    private boolean mCardEdited = false;
 
     private static final int CARD_LOADER = 0;
 
@@ -107,13 +110,14 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public boolean allowBackPressed(){
-        if(mEdited){
+        if(mTitleEdited || mCardEdited){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage(R.string.dialog_save_message)
                     .setPositiveButton(R.string.dialog_button_save, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            UpdateData();
+                            UpdateDeckName();
+                            UpdateCards();
                             getActivity().finish();
                         }
                     })
@@ -132,10 +136,11 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
-    private void UpdateData(){
+    private void UpdateDeckName(){
         EditText editDeckName = (EditText) getActivity().findViewById(R.id.edit_deck_name_text);
 
-        if(!editDeckName.getText().toString().equals(mCurrentDeck)){
+        if(mTitleEdited){
+            Log.v(LOG_TAG, "Updating Deck Name");
             ContentValues updatedDeck = new ContentValues();
             updatedDeck.put(CardsContract.DeckEntry.COLUMN_DECK_NAME, editDeckName.getText().toString());
 
@@ -146,29 +151,33 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
                     new String[]{String.valueOf(Utility.getDeckId(getActivity(), mCurrentDeck))}
             );
             mCurrentDeck = editDeckName.getText().toString();
-            //change the SingleDeckFragment Toolbar title to new edited deck name
         }
+    }
 
-        mCardAdapter.getCursor().moveToFirst();
-        for(int i = 0; i < mCardAdapter.getCount(); i++){
-            ListView listView = (ListView) getActivity().findViewById(R.id.edit_deck_list_view);
-            LinearLayout listViewItem = (LinearLayout) listView.getChildAt(i);
-            EditText editTerm = (EditText) listViewItem.findViewById(R.id.edit_card_term);
-            EditText editDescription = (EditText) listViewItem.findViewById(R.id.edit_card_description);
+    private void UpdateCards(){
+        if(mCardEdited) {
+            Log.v(LOG_TAG, "Updating Cards");
+            mCardAdapter.getCursor().moveToFirst();
+            for (int i = 0; i < mCardAdapter.getCount(); i++) {
+                ListView listView = (ListView) getActivity().findViewById(R.id.edit_deck_list_view);
+                LinearLayout listViewItem = (LinearLayout) listView.getChildAt(i);
+                EditText editTerm = (EditText) listViewItem.findViewById(R.id.edit_card_term);
+                EditText editDescription = (EditText) listViewItem.findViewById(R.id.edit_card_description);
 
-            ContentValues updatedCard = new ContentValues();
-            updatedCard.put(CardsContract.CardEntry.COLUMN_TERM, editTerm.getText().toString());
-            updatedCard.put(CardsContract.CardEntry.COLUMN_DESCRIPTION, editDescription.getText().toString());
+                ContentValues updatedCard = new ContentValues();
+                updatedCard.put(CardsContract.CardEntry.COLUMN_TERM, editTerm.getText().toString());
+                updatedCard.put(CardsContract.CardEntry.COLUMN_DESCRIPTION, editDescription.getText().toString());
 
-            long cardId = mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID));
+                long cardId = mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID));
 
-            getActivity().getContentResolver().update(
-                    CardsContract.CardEntry.CONTENT_URI,
-                    updatedCard,
-                    CardsContract.CardEntry._ID + " = ?",
-                    new String[]{String.valueOf(cardId)}
-            );
-            mCardAdapter.getCursor().moveToNext();
+                getActivity().getContentResolver().update(
+                        CardsContract.CardEntry.CONTENT_URI,
+                        updatedCard,
+                        CardsContract.CardEntry._ID + " = ?",
+                        new String[]{String.valueOf(cardId)}
+                );
+                mCardAdapter.getCursor().moveToNext();
+            }
         }
     }
 
@@ -222,9 +231,11 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             switch(view.getId()){
                 case R.id.edit_deck_name_text:
+                    mTitleEdited = false;
+                    break;
                 case R.id.edit_card_term:
                 case R.id.edit_card_description:
-                    mEdited = false;
+                    mCardEdited = false;
                     break;
             }
         }
@@ -233,9 +244,11 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             switch(view.getId()){
                 case R.id.edit_deck_name_text:
+                    mTitleEdited = true;
+                    break;
                 case R.id.edit_card_term:
                 case R.id.edit_card_description:
-                    mEdited = true;
+                    mCardEdited = true;
                     break;
             }
         }
