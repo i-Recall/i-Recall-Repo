@@ -1,8 +1,6 @@
 package com.example.nurhazim.i_recall;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -12,25 +10,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
-
-import java.util.Vector;
 
 /**
  * Created by NurHazim on 17-Oct-14.
@@ -158,16 +150,6 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
                     new String[]{String.valueOf(Utility.getDeckId(getActivity(), mCurrentDeck))}
             );
             mCurrentDeck = editDeckName.getText().toString();
-        }
-    }
-
-    private void DeleteCards(Vector<Long> id){
-        for(Long cardId : id){
-            getActivity().getContentResolver().delete(
-                    CardsContract.CardEntry.CONTENT_URI,
-                    CardsContract.CardEntry._ID + " = ?",
-                    new String[]{String.valueOf(cardId)}
-            );
         }
     }
 

@@ -87,7 +87,8 @@ public class CardProvider extends ContentProvider {
         String selection = sCardWithID;
         String[] selectionArgs = new String[]{deckID};
 
-        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.CardEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -126,7 +127,7 @@ public class CardProvider extends ContentProvider {
                 retCursor = getDeckWithName(uri, projection, sortOrder);
                 break;
             case DECK_WITH_ID:
-                retCursor = getCardsWithID(uri, projection, sortOrder);
+                retCursor = getDecksWithID(uri, projection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(

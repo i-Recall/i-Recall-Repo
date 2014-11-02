@@ -1,13 +1,18 @@
 package com.example.nurhazim.i_recall;
 
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +24,16 @@ import android.widget.SimpleCursorAdapter;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 /**
  * Created by NurHazim on 16-Oct-14.
  */
-public class SingleDeckFragment extends Fragment {
+public class SingleDeckFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = SingleDeckFragment.class.getSimpleName();
+
+    private static final int CARD_LOADER = 0;
 
     public static final String DECK_NAME_KEY = "deck_name";
     private String mCurrentDeckName;
@@ -31,6 +41,42 @@ public class SingleDeckFragment extends Fragment {
     private SimpleCursorAdapter mCardAdapter;
 
     public SingleDeckFragment() {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        long deckId;
+        if(mCurrentDeckId == -1){
+            deckId = Utility.getDeckId(getActivity(), mCurrentDeckName);
+        }
+        else{
+            deckId = mCurrentDeckId;
+        }
+
+        return new CursorLoader(
+                getActivity(),
+                CardsContract.CardEntry.buildCardWithDeckID(deckId),
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCardAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCardAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(CARD_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -42,28 +88,26 @@ public class SingleDeckFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mCurrentDeckName = Utility.getDeckName(getActivity(), mCurrentDeckId);
-        getActivity().setTitle(mCurrentDeckName);
-        Cursor cursor = getActivity().getContentResolver().query(
-                CardsContract.CardEntry.buildCardWithDeckID(mCurrentDeckId),
-                null,
-                null,
-                null,
-                null
-        );
-        mCardAdapter.swapCursor(cursor);
+        getLoaderManager().restartLoader(CARD_LOADER, null, this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.action_edit_deck){
-            Intent intent = new Intent(getActivity(), EditDeckActivity.class);
-            intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
-            startActivity(intent);
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_edit_deck:
+                Intent intent = new Intent(getActivity(), EditDeckActivity.class);
+                intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
+                startActivity(intent);
+                return true;
+            case R.id.action_delete:
+                Vector<Long> toDelete = new Vector<Long>();
+                toDelete.add(mCurrentDeckId);
+                Utility.DeleteDeck(getActivity(), toDelete);
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -96,18 +140,55 @@ public class SingleDeckFragment extends Fragment {
                 );
                 cardsListView.setAdapter(mCardAdapter);
             }
+            cardsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            cardsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                    final int checkCount = cardsListView.getCheckedItemCount();
+                    mode.setTitle(checkCount + " Selected");
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.delete_menu, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+                    switch (menuItem.getItemId()){
+                        case R.id.action_delete:
+                            SparseBooleanArray checkedItems = cardsListView.getCheckedItemPositions();
+                            if(checkedItems != null){
+                                Vector<Long> toDelete = new Vector<Long>();
+                                for(int i = 0; i < checkedItems.size(); i++){
+                                    int itemIndex = checkedItems.keyAt(i);
+                                    mCardAdapter.getCursor().moveToPosition(itemIndex);
+                                    toDelete.add(mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID)));
+                                }
+                                Utility.DeleteCards(getActivity(), toDelete);
+                            }
+                            mode.finish();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+
+                }
+            });
         }
 
         return rootView;
-    }
-
-    private void toggleSelection(ListView list, int position){
-        if(list.isItemChecked(position)){
-            list.setItemChecked(position, false);
-        }
-        else {
-            list.setItemChecked(position, true);
-        }
     }
 
     private Cursor getCards(){
@@ -121,14 +202,13 @@ public class SingleDeckFragment extends Fragment {
         );
         if(deckCursor.moveToFirst()){
             rowId = deckCursor.getLong(deckCursor.getColumnIndex(CardsContract.DeckEntry._ID));
-            Cursor cardCursor = getActivity().getContentResolver().query(
+            return getActivity().getContentResolver().query(
                     CardsContract.CardEntry.buildCardWithDeckID(rowId),
                     null,
                     null,
                     null,
                     null
             );
-            return cardCursor;
         }
         else{
             return null;
