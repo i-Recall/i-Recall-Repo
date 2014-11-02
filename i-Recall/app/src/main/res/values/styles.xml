@@ -6,9 +6,15 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_done</item>
+
     </style>
 
-    //https://chris.banes.me/2014/10/17/appcompat-v21/
-    //http://antonioleiva.com/material-design-everywhere/
+    <style name="EditCard">
+
+        <!--stub-->
+
+    </style>
 
 </resources>

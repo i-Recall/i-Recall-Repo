@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nurhazim.i_recall" >
 
-    <uses-sdk
-        tools:node="replace"/>
+    <uses-sdk tools:node="replace" />
 
     <application
         android:allowBackup="true"
