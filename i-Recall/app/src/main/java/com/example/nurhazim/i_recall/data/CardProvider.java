@@ -1,13 +1,11 @@
 package com.example.nurhazim.i_recall.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
@@ -27,19 +25,20 @@ public class CardProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private CardsDbHelper mOpenHelper;
-
-    private static final SQLiteQueryBuilder sQueryBuilder;
-
-    static {
-        sQueryBuilder = new SQLiteQueryBuilder();
-        sQueryBuilder.setTables(
-                CardsContract.CardEntry.TABLE_NAME + " INNER JOIN " +
-                        CardsContract.DeckEntry.TABLE_NAME +
-                        " ON " + CardsContract.CardEntry.TABLE_NAME +
-                        "." + CardsContract.CardEntry.COLUMN_DECK_KEY +
-                        " = " + CardsContract.DeckEntry.TABLE_NAME +
-                        "." + CardsContract.DeckEntry._ID);
-    }
+    
+//    this can be used for reference if every need to
+//    private static final SQLiteQueryBuilder sQueryBuilder;
+//
+//    static {
+//        sQueryBuilder = new SQLiteQueryBuilder();
+//        sQueryBuilder.setTables(
+//                CardsContract.CardEntry.TABLE_NAME + " INNER JOIN " +
+//                        CardsContract.DeckEntry.TABLE_NAME +
+//                        " ON " + CardsContract.CardEntry.TABLE_NAME +
+//                        "." + CardsContract.CardEntry.COLUMN_DECK_KEY +
+//                        " = " + CardsContract.DeckEntry.TABLE_NAME +
+//                        "." + CardsContract.DeckEntry._ID);
+//    }
 
     private static final String sDeckWithNameSelection =
             CardsContract.DeckEntry.TABLE_NAME +
@@ -66,7 +65,7 @@ public class CardProvider extends ContentProvider {
                 sortOder);
     }
 
-    private Cursor getDecksWithID(Uri uri, String[] projection, String sortOrder){
+    private Cursor getDeckWithID(Uri uri, String[] projection, String sortOrder){
         String[] selectionArgs = new String[]{CardsContract.DeckEntry.getIdFromUri(uri)};
 
         return mOpenHelper.getReadableDatabase().query(
@@ -127,7 +126,7 @@ public class CardProvider extends ContentProvider {
                 retCursor = getDeckWithName(uri, projection, sortOrder);
                 break;
             case DECK_WITH_ID:
-                retCursor = getDecksWithID(uri, projection, sortOrder);
+                retCursor = getDeckWithID(uri, projection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(
