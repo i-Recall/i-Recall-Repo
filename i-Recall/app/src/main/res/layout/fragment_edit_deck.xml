@@ -19,7 +19,32 @@
     <ListView
         android:id="@+id/edit_deck_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        style="@style/EditCard"
+        android:layout_weight="1">
     </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/new_card_term"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="@string/hint_card_term"/>
+
+        <EditText
+            android:id="@+id/new_card_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:hint="@string/hint_card_description"/>
+
+    </LinearLayout>
 
 </LinearLayout>

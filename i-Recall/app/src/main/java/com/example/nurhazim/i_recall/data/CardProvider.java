@@ -1,13 +1,11 @@
 package com.example.nurhazim.i_recall.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
@@ -19,6 +17,7 @@ public class CardProvider extends ContentProvider {
 
     private static final int DECK = 100;
     private static final int DECK_WITH_NAME = 101;
+    private static final int DECK_WITH_ID = 102;
     private static final int CARD = 300;
     private static final int CARD_WITH_DECK_ID = 301;
     //private static final int CARD_WITH_CARD_ID = 302;
@@ -26,23 +25,27 @@ public class CardProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private CardsDbHelper mOpenHelper;
-
-    private static final SQLiteQueryBuilder sQueryBuilder;
-
-    static {
-        sQueryBuilder = new SQLiteQueryBuilder();
-        sQueryBuilder.setTables(
-                CardsContract.CardEntry.TABLE_NAME + " INNER JOIN " +
-                        CardsContract.DeckEntry.TABLE_NAME +
-                        " ON " + CardsContract.CardEntry.TABLE_NAME +
-                        "." + CardsContract.CardEntry.COLUMN_DECK_KEY +
-                        " = " + CardsContract.DeckEntry.TABLE_NAME +
-                        "." + CardsContract.DeckEntry._ID);
-    }
+    
+//    this can be used for reference if every need to
+//    private static final SQLiteQueryBuilder sQueryBuilder;
+//
+//    static {
+//        sQueryBuilder = new SQLiteQueryBuilder();
+//        sQueryBuilder.setTables(
+//                CardsContract.CardEntry.TABLE_NAME + " INNER JOIN " +
+//                        CardsContract.DeckEntry.TABLE_NAME +
+//                        " ON " + CardsContract.CardEntry.TABLE_NAME +
+//                        "." + CardsContract.CardEntry.COLUMN_DECK_KEY +
+//                        " = " + CardsContract.DeckEntry.TABLE_NAME +
+//                        "." + CardsContract.DeckEntry._ID);
+//    }
 
     private static final String sDeckWithNameSelection =
             CardsContract.DeckEntry.TABLE_NAME +
                     "." + CardsContract.DeckEntry.COLUMN_DECK_NAME + " = ? ";
+    private static final String sDeckWithID =
+            CardsContract.DeckEntry.TABLE_NAME +
+                    "." + CardsContract.DeckEntry._ID + " = ?";
     private static final String sCardWithID =
             CardsContract.CardEntry.TABLE_NAME +
                     "." + CardsContract.CardEntry.COLUMN_DECK_KEY + " = ? ";
@@ -52,13 +55,28 @@ public class CardProvider extends ContentProvider {
         String[] selectionArgs = new String[]{CardsContract.DeckEntry.getNameFromUri(uri)};
         Log.v(LOG_TAG, "getting decks with name: " + CardsContract.DeckEntry.getNameFromUri(uri));
 
-        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.DeckEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
                 null,
                 null,
                 sortOder);
+    }
+
+    private Cursor getDeckWithID(Uri uri, String[] projection, String sortOrder){
+        String[] selectionArgs = new String[]{CardsContract.DeckEntry.getIdFromUri(uri)};
+
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.DeckEntry.TABLE_NAME,
+                projection,
+                sDeckWithID,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
     }
 
     private Cursor getCardsWithID(Uri uri, String[] projection, String sortOrder){
@@ -68,7 +86,8 @@ public class CardProvider extends ContentProvider {
         String selection = sCardWithID;
         String[] selectionArgs = new String[]{deckID};
 
-        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.CardEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -83,6 +102,7 @@ public class CardProvider extends ContentProvider {
         final String authority = CardsContract.CONTENT_AUTHORITY;
 
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK, DECK);
+        sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/#", DECK_WITH_ID);
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/*", DECK_WITH_NAME);
 
         sURIMatcher.addURI(authority, CardsContract.PATH_CARD, CARD);
@@ -104,6 +124,9 @@ public class CardProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)){
             case DECK_WITH_NAME:
                 retCursor = getDeckWithName(uri, projection, sortOrder);
+                break;
+            case DECK_WITH_ID:
+                retCursor = getDeckWithID(uri, projection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -143,6 +166,8 @@ public class CardProvider extends ContentProvider {
 
         switch(match){
             case DECK_WITH_NAME:
+                return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
+            case DECK_WITH_ID:
                 return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
             case DECK:
                 return CardsContract.DeckEntry.CONTENT_TYPE;

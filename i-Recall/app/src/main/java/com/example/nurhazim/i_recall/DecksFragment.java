@@ -15,6 +15,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -30,6 +33,8 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
+
+import java.util.Vector;
 
 /**
  * Created by NurHazim on 15-Oct-14.
@@ -123,8 +128,55 @@ public class DecksFragment extends Fragment implements LoaderManager.LoaderCallb
 
         View rootView = inflater.inflate(R.layout.fragment_decks, container, false);
 
-        ListView deckListView = (ListView) rootView.findViewById(R.id.decks_listview);
+        final ListView deckListView = (ListView) rootView.findViewById(R.id.decks_listview);
         deckListView.setAdapter(mDeckAdapter);
+
+        deckListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        deckListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                final int checkCount = deckListView.getCheckedItemCount();
+                mode.setTitle(checkCount + " Selected");
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.delete_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.action_delete:
+                        SparseBooleanArray checkedItems = deckListView.getCheckedItemPositions();
+                        if(checkedItems != null){
+                            Vector<Long> toDelete = new Vector<Long>();
+                            for(int i = 0; i < checkedItems.size(); i++){
+                                int itemIndex = checkedItems.keyAt(i);
+                                mDeckAdapter.getCursor().moveToPosition(itemIndex);
+                                toDelete.add(mDeckAdapter.getCursor().getLong(mDeckAdapter.getCursor().getColumnIndex(CardsContract.DeckEntry._ID)));
+                            }
+                            Utility.DeleteDeck(getActivity(), toDelete);
+                        }
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
 
         deckListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

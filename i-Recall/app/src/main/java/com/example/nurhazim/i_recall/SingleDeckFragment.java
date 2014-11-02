@@ -1,35 +1,82 @@
 package com.example.nurhazim.i_recall;
 
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import com.example.nurhazim.i_recall.R;
 import com.example.nurhazim.i_recall.data.CardsContract;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by NurHazim on 16-Oct-14.
  */
-public class SingleDeckFragment extends Fragment {
+public class SingleDeckFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = SingleDeckFragment.class.getSimpleName();
 
+    private static final int CARD_LOADER = 0;
+
     public static final String DECK_NAME_KEY = "deck_name";
-    private String mCurrentDeck;
+    private String mCurrentDeckName;
+    private long mCurrentDeckId;
     private SimpleCursorAdapter mCardAdapter;
 
     public SingleDeckFragment() {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        long deckId;
+        if(mCurrentDeckId == -1){
+            deckId = Utility.getDeckId(getActivity(), mCurrentDeckName);
+        }
+        else{
+            deckId = mCurrentDeckId;
+        }
+
+        return new CursorLoader(
+                getActivity(),
+                CardsContract.CardEntry.buildCardWithDeckID(deckId),
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCardAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCardAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(CARD_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -39,28 +86,42 @@ public class SingleDeckFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(CARD_LOADER, null, this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.action_edit_deck){
-            Intent intent = new Intent(getActivity(), EditDeckActivity.class);
-            intent.putExtra(DECK_NAME_KEY, mCurrentDeck);
-            startActivity(intent);
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_edit_deck:
+                Intent intent = new Intent(getActivity(), EditDeckActivity.class);
+                intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
+                startActivity(intent);
+                return true;
+            case R.id.action_delete:
+                Vector<Long> toDelete = new Vector<Long>();
+                toDelete.add(mCurrentDeckId);
+                Utility.DeleteDeck(getActivity(), toDelete);
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_single_deck, container, false);
-        ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
+        final ListView cardsListView = (ListView) rootView.findViewById(R.id.cards_listview);
 
         Intent intent = getActivity().getIntent();
         if(intent != null && intent.hasExtra(DECK_NAME_KEY)){
-            mCurrentDeck = intent.getStringExtra(DECK_NAME_KEY);
-            Log.v(LOG_TAG, "Current deck is " + mCurrentDeck);
-            getActivity().setTitle(mCurrentDeck);
+            mCurrentDeckName = intent.getStringExtra(DECK_NAME_KEY);
+            mCurrentDeckId = Utility.getDeckId(getActivity(), mCurrentDeckName);
+            Log.v(LOG_TAG, "Current deck is " + mCurrentDeckName);
+            getActivity().setTitle(mCurrentDeckName);
             Cursor cursor = getCards();
             if(cursor != null){
                 mCardAdapter = new SimpleCursorAdapter(
@@ -79,6 +140,52 @@ public class SingleDeckFragment extends Fragment {
                 );
                 cardsListView.setAdapter(mCardAdapter);
             }
+            cardsListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            cardsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                    final int checkCount = cardsListView.getCheckedItemCount();
+                    mode.setTitle(checkCount + " Selected");
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.delete_menu, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem menuItem) {
+                    switch (menuItem.getItemId()){
+                        case R.id.action_delete:
+                            SparseBooleanArray checkedItems = cardsListView.getCheckedItemPositions();
+                            if(checkedItems != null){
+                                Vector<Long> toDelete = new Vector<Long>();
+                                for(int i = 0; i < checkedItems.size(); i++){
+                                    int itemIndex = checkedItems.keyAt(i);
+                                    mCardAdapter.getCursor().moveToPosition(itemIndex);
+                                    toDelete.add(mCardAdapter.getCursor().getLong(mCardAdapter.getCursor().getColumnIndex(CardsContract.CardEntry._ID)));
+                                }
+                                Utility.DeleteCards(getActivity(), toDelete);
+                            }
+                            mode.finish();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+
+                }
+            });
         }
 
         return rootView;
@@ -87,7 +194,7 @@ public class SingleDeckFragment extends Fragment {
     private Cursor getCards(){
         long rowId;
         Cursor deckCursor = getActivity().getContentResolver().query(
-                CardsContract.DeckEntry.buildDeckWithName(mCurrentDeck),
+                CardsContract.DeckEntry.buildDeckWithName(mCurrentDeckName),
                 null,
                 null,
                 null,
@@ -95,14 +202,13 @@ public class SingleDeckFragment extends Fragment {
         );
         if(deckCursor.moveToFirst()){
             rowId = deckCursor.getLong(deckCursor.getColumnIndex(CardsContract.DeckEntry._ID));
-            Cursor cardCursor = getActivity().getContentResolver().query(
+            return getActivity().getContentResolver().query(
                     CardsContract.CardEntry.buildCardWithDeckID(rowId),
                     null,
                     null,
                     null,
                     null
             );
-            return cardCursor;
         }
         else{
             return null;

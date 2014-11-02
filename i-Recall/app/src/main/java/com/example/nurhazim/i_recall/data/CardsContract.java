@@ -36,7 +36,14 @@ public class CardsContract {
             return CONTENT_URI.buildUpon().appendPath(deckName).build();
         }
 
+        public static Uri buildDeckWithId(long id){
+            return CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
+        }
+
         public static String getNameFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
+        public static String getIdFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
     }

@@ -9,6 +9,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,6 +29,10 @@ public class EditDeckActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_deck);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_edit_deck);
+        setSupportActionBar(toolbar);
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new EditDeckFragment(), TAG_FRAGMENT)
