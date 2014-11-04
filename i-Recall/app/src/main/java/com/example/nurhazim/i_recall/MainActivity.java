@@ -1,10 +1,7 @@
 package com.example.nurhazim.i_recall;
 
-import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -12,17 +9,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -33,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
     private ListView mDrawerList;
     private CharSequence mTitle;
     private ActionBarDrawerToggle mDrawerToggle;
+    private LinearLayout mLinearLayout;
     private CharSequence mDrawerTitle;
 
     private static final int NAV_ALL_DECKS = 0;
@@ -49,6 +43,7 @@ public class MainActivity extends ActionBarActivity {
         mNavItems = getResources().getStringArray(R.array.nav_drawer_items);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mLinearLayout = (LinearLayout) findViewById(R.id.linear_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -84,6 +79,8 @@ public class MainActivity extends ActionBarActivity {
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mTitle = mDrawerTitle = getTitle();
+
+        mDrawerLayout.setStatusBarBackgroundColor(R.attr.colorPrimary);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()

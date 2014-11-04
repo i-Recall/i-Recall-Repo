@@ -1,21 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/color_primary_dark">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_edit_deck"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
-
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_height="match_parent"
-        tools:context="com.example.nurhazim.i_recall.EditDeckActivity"
-        tools:ignore="MergeRootFrame" />
+        android:layout_width="match_parent"
+        android:background="@android:color/background_light">
 
-</LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_edit_deck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.example.nurhazim.i_recall.EditDeckActivity"
+            tools:ignore="MergeRootFrame" />
+
+    </LinearLayout>
+
+</FrameLayout>
