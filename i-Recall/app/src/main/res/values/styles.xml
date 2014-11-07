@@ -7,6 +7,8 @@
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+
         <item name="actionModeCloseDrawable">@drawable/ic_done</item>
 
     </style>
