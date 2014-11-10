@@ -17,14 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -184,6 +183,40 @@ public class SingleDeckFragment extends Fragment implements LoaderManager.Loader
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
 
+                }
+            });
+
+            Button btnFlashcard = (Button) rootView.findViewById(R.id.button_flashcards);
+            Button btnTruefalse = (Button) rootView.findViewById(R.id.button_truefalse);
+            Button btnGame = (Button) rootView.findViewById(R.id.button_game);
+
+            btnFlashcard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), StudyActivity.class);
+                    intent.putExtra(StudyActivity.MODE_KEY, String.valueOf(StudyActivity.MODE_FLASHCARDS));
+                    intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
+                    startActivity(intent);
+                }
+            });
+
+            btnTruefalse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), StudyActivity.class);
+                    intent.putExtra(StudyActivity.MODE_KEY, String.valueOf(StudyActivity.MODE_TRUE_FALSE));
+                    intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
+                    startActivity(intent);
+                }
+            });
+
+            btnGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), StudyActivity.class);
+                    intent.putExtra(StudyActivity.MODE_KEY, String.valueOf(StudyActivity.MODE_GAME));
+                    intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
+                    startActivity(intent);
                 }
             });
         }

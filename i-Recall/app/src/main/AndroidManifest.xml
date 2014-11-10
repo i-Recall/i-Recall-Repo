@@ -40,6 +40,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.SingleDeckActivity" />
         </activity>
+        <activity
+            android:name=".StudyActivity"
+            android:label="@string/title_activity_study"
+            android:parentActivityName=".SingleDeckActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.nurhazim.i_recall.SingleDeckActivity" />
+        </activity>
     </application>
 
 </manifest>
