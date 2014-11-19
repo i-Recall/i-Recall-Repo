@@ -19,9 +19,6 @@ import com.example.nurhazim.i_recall.data.CardsContract;
  */
 
 public class StudyFlashcardFragment extends Fragment {
-    public static final String TERM_KEY = "term";
-    public static final String DESCRIPTION_KEY = "description";
-
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
 
@@ -34,7 +31,7 @@ public class StudyFlashcardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.pager, container, false);
+        View rootView = inflater.inflate(R.layout.card_pager, container, false);
 
         Bundle bundle = getArguments();
         if(bundle != null){
@@ -64,8 +61,8 @@ public class StudyFlashcardFragment extends Fragment {
         public android.support.v4.app.Fragment getItem(int i) {
             mCursor.moveToPosition(i);
             Bundle bundle = new Bundle();
-            bundle.putString(TERM_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM)));
-            bundle.putString(DESCRIPTION_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION)));
+            bundle.putString(StudyActivity.TERM_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM)));
+            bundle.putString(StudyActivity.DESCRIPTION_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION)));
             CardFragment cardFragment = new CardFragment();
             cardFragment.setArguments(bundle);
             return cardFragment;

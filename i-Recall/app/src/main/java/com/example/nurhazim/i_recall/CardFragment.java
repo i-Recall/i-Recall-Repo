@@ -1,9 +1,6 @@
 package com.example.nurhazim.i_recall;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +8,9 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -21,6 +20,8 @@ public class CardFragment extends Fragment {
     private boolean showingFront = true;
     private String textTerm = "This is a term";
     private String textDescription = "This is a description";
+
+    private boolean evaluated = false;
 
     TextView cardText;
 
@@ -33,32 +34,47 @@ public class CardFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if(bundle != null){
-            textTerm = bundle.getString(StudyFlashcardFragment.TERM_KEY);
-            textDescription = bundle.getString(StudyFlashcardFragment.DESCRIPTION_KEY);
+            textTerm = bundle.getString(StudyActivity.TERM_KEY);
+            textDescription = bundle.getString(StudyActivity.DESCRIPTION_KEY);
         }
 
-        final CardView flashcard = (CardView) rootView.findViewById(R.id.flashcard);
-        cardText = (TextView) flashcard.findViewById(R.id.flashcard_text);
+        final Button btnCorrect = (Button) rootView.findViewById(R.id.button_correct);
+        final Button btnWrong = (Button) rootView.findViewById(R.id.button_wrong);
+
+        btnCorrect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnCorrect.setVisibility(View.INVISIBLE);
+                btnWrong.setVisibility(View.INVISIBLE);
+                evaluated = true;
+            }
+        });
+        btnWrong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnCorrect.setVisibility(View.INVISIBLE);
+                btnWrong.setVisibility(View.INVISIBLE);
+                evaluated = true;
+            }
+        });
+
+        final CardView flashcard = (CardView) rootView.findViewById(R.id.cardview_flashcard);
+
+        cardText = (TextView) flashcard.findViewById(R.id.cardview_text);
+
         cardText.setText(textTerm);
+
         flashcard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ObjectAnimator flipOut = ObjectAnimator.ofFloat(flashcard, "rotationY", 0.0f, 90f);
-                flipOut.setDuration(900);
-                flipOut.setInterpolator(new AccelerateInterpolator());
+                Animation flashcardFlip = AnimationUtils.loadAnimation(getActivity(), R.anim.flashcard_flip);
+                flashcard.startAnimation(flashcardFlip);
+                ToggleText();
 
-                final ObjectAnimator flipIn = ObjectAnimator.ofFloat(flashcard, "rotationY", 270f, 360f);
-                flipIn.setDuration(900);
-                flipIn.setInterpolator(new AccelerateInterpolator());
-
-                flipOut.start();
-                flipOut.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        ToggleText();
-                        flipIn.start();
-                    }
-                });
+                if (!evaluated) {
+                    btnCorrect.setVisibility(View.VISIBLE);
+                    btnWrong.setVisibility(View.VISIBLE);
+                }
             }
         });
 

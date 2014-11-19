@@ -1,12 +1,16 @@
 package com.example.nurhazim.i_recall;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 
 
 public class StudyActivity extends FragmentActivity {
@@ -17,31 +21,55 @@ public class StudyActivity extends FragmentActivity {
     public static final int MODE_GAME = 2;
 
     public static final String MODE_KEY = "study_mode";
+    public static final String TERM_KEY = "term";
+    public static final String DESCRIPTION_KEY = "description";
+
     private static String mCurrentDeck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study);
+
+        //hide status bar
+        if (Build.VERSION.SDK_INT < 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+        else {
+            View decorView = getWindow().getDecorView();
+            // Hide the status bar.
+            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if(intent != null && intent.hasExtra(MODE_KEY) && intent.hasExtra(SingleDeckFragment.DECK_NAME_KEY)){
                 mCurrentDeck = intent.getStringExtra(SingleDeckFragment.DECK_NAME_KEY);
+
+                Fragment newStudy = new Fragment();
                 switch(Integer.parseInt(intent.getStringExtra(MODE_KEY))){
                     case MODE_FLASHCARDS:
-                        StudyFlashcardFragment newFlashcard = new StudyFlashcardFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SingleDeckFragment.DECK_NAME_KEY, mCurrentDeck);
-                        newFlashcard.setArguments(bundle);
-
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.add(R.id.container, newFlashcard);
-                        ft.commit();
+                        newStudy = new StudyFlashcardFragment();
+                        break;
+                    case MODE_TRUE_FALSE:
+                        newStudy = new TrueFalseFragment();
+                        break;
+                    case MODE_GAME:
+                        newStudy = new StudyGameFragment();
                         break;
                     default:
                         Log.e(LOG_TAG, "Invalid study mode");
                         break;
                 }
+                Bundle bundle = new Bundle();
+                bundle.putString(SingleDeckFragment.DECK_NAME_KEY, mCurrentDeck);
+                newStudy.setArguments(bundle);
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.add(R.id.container, newStudy);
+                ft.commit();
             }
         }
     }

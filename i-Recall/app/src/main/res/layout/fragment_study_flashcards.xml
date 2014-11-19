@@ -1,25 +1,57 @@
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/content">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        android:padding="16dp"
-        android:layout_margin="16dp"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/card_min_height"
+    <ScrollView
+        android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:id="@+id/flashcard"
-        android:layout_gravity="center_vertical">
+        android:id="@+id/content"
+        android:layout_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/card_min_height"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:id="@+id/flashcard_text"/>
+        <android.support.v7.widget.CardView
+            android:padding="16dp"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/card_min_height"
+            android:layout_width="match_parent"
+            android:id="@+id/cardview_flashcard"
+            android:layout_gravity="center|center">
 
-    </android.support.v7.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/card_min_height"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/cardview_text"/>
 
-</ScrollView>
+        </android.support.v7.widget.CardView>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="16dp">
+
+        <Button
+            android:id="@+id/button_wrong"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_wrong"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/button_correct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_correct"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+</LinearLayout>

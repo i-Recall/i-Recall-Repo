@@ -188,7 +188,6 @@ public class SingleDeckFragment extends Fragment implements LoaderManager.Loader
 
             Button btnFlashcard = (Button) rootView.findViewById(R.id.button_flashcards);
             Button btnTruefalse = (Button) rootView.findViewById(R.id.button_truefalse);
-            Button btnGame = (Button) rootView.findViewById(R.id.button_game);
 
             btnFlashcard.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -205,16 +204,6 @@ public class SingleDeckFragment extends Fragment implements LoaderManager.Loader
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), StudyActivity.class);
                     intent.putExtra(StudyActivity.MODE_KEY, String.valueOf(StudyActivity.MODE_TRUE_FALSE));
-                    intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
-                    startActivity(intent);
-                }
-            });
-
-            btnGame.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), StudyActivity.class);
-                    intent.putExtra(StudyActivity.MODE_KEY, String.valueOf(StudyActivity.MODE_GAME));
                     intent.putExtra(DECK_NAME_KEY, mCurrentDeckName);
                     startActivity(intent);
                 }
