@@ -154,7 +154,7 @@ public class MainActivity extends ActionBarActivity {
                 fragment = null;
                 break;
             case NAV_SEARCH:
-                fragment = null;
+                fragment = new SearchFragment();
                 break;
             case NAV_IMPORT:
                 fragment = null;

@@ -18,8 +18,10 @@ public class CardProvider extends ContentProvider {
     private static final int DECK = 100;
     private static final int DECK_WITH_NAME = 101;
     private static final int DECK_WITH_ID = 102;
+    private static final int DECK_WITH_SEARCH_STRING = 103; // wsc: newly added
     private static final int CARD = 300;
     private static final int CARD_WITH_DECK_ID = 301;
+
     //private static final int CARD_WITH_CARD_ID = 302;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -49,6 +51,31 @@ public class CardProvider extends ContentProvider {
     private static final String sCardWithID =
             CardsContract.CardEntry.TABLE_NAME +
                     "." + CardsContract.CardEntry.COLUMN_DECK_KEY + " = ? ";
+
+    /**
+     * adrian: newly added
+     * Get a Decks cursor using the search string
+     * @param uri The Uri that specify the data to be retrieved
+     * @param projection The column selection, not used
+     * @param selection The WHERE part of sql query (excluding the WHERE keyword)
+     * @param sortOder The sorting order, not used
+     * @return
+     */
+    private Cursor getDecksWithCardTermSearchString(Uri uri, String[] projection,String selection, String sortOder){
+        Log.v(LOG_TAG, "getting decks with card search term : " + CardsContract.DeckEntry.getSearchStringFromUri(uri));
+
+        // construct the sql query
+        // the example resulting string will be like : select distinct deck._id,deck_name from deck,card WHERE deck._id = card.deck_key AND term LIKE '%Customer%'
+        String sqlQuery = "select distinct " + CardsContract.DeckEntry.TABLE_NAME + "." + CardsContract.DeckEntry._ID + "," + CardsContract.DeckEntry.COLUMN_DECK_NAME + " from ";
+        sqlQuery = sqlQuery + CardsContract.DeckEntry.TABLE_NAME + "," + CardsContract.CardEntry.TABLE_NAME;
+        sqlQuery = sqlQuery + " WHERE " + CardsContract.DeckEntry.TABLE_NAME + "." + CardsContract.DeckEntry._ID + " = " + CardsContract.CardEntry.TABLE_NAME + "." + CardsContract.CardEntry.COLUMN_DECK_KEY;
+        sqlQuery = sqlQuery + " AND " + selection;
+
+        Log.v(LOG_TAG, "sqlQuery : " + sqlQuery);
+
+        // execute rawQuery and return a cursor, we need to use rawQuery because we are dealing with 2 joined tables, deck and also card
+        return mOpenHelper.getReadableDatabase().rawQuery(sqlQuery,null);
+    }
 
     private Cursor getDeckWithName(Uri uri, String[] projection, String sortOder){
         String selection = sDeckWithNameSelection;
@@ -102,6 +129,7 @@ public class CardProvider extends ContentProvider {
         final String authority = CardsContract.CONTENT_AUTHORITY;
 
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK, DECK);
+        sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/search_term/*", DECK_WITH_SEARCH_STRING); // adrian: newly added
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/#", DECK_WITH_ID);
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/*", DECK_WITH_NAME);
 
@@ -127,6 +155,10 @@ public class CardProvider extends ContentProvider {
                 break;
             case DECK_WITH_ID:
                 retCursor = getDeckWithID(uri, projection, sortOrder);
+                break;
+            // adrian: newly added
+            case DECK_WITH_SEARCH_STRING:
+                retCursor = getDecksWithCardTermSearchString(uri, projection,selection, sortOrder);
                 break;
             case DECK:
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -170,6 +202,9 @@ public class CardProvider extends ContentProvider {
             case DECK_WITH_ID:
                 return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
             case DECK:
+                return CardsContract.DeckEntry.CONTENT_TYPE;
+            // adrian: newly added
+            case DECK_WITH_SEARCH_STRING:
                 return CardsContract.DeckEntry.CONTENT_TYPE;
             case CARD_WITH_DECK_ID:
                 return CardsContract.CardEntry.CONTENT_TYPE;
