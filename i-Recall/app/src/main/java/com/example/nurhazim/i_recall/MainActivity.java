@@ -30,9 +30,12 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence mDrawerTitle;
 
     private static final int NAV_ALL_DECKS = 0;
-    private static final int NAV_BACKUP = 1;
-    private static final int NAV_SEARCH = 2;
-    private static final int NAV_IMPORT = 3;
+    private static final int NAV_SEARCH = 3;
+    private static final int NAV_IMPORT = 4;
+
+
+    private static final int NAV_COLLAB_STUDY = 1;
+    private static final int NAV_BACKUP = 2;
 
 
     @Override
@@ -107,8 +110,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+
         if(menu.findItem(R.id.action_new_deck)!=null) {
             menu.findItem(R.id.action_new_deck) .setVisible(!drawerOpen);
+        if(menu.findItem(R.id.action_new_deck) != null) {
+            menu.findItem(R.id.action_new_deck).setVisible(!drawerOpen);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -149,6 +155,9 @@ public class MainActivity extends ActionBarActivity {
         switch(position){
             case NAV_ALL_DECKS:
                 fragment = new DecksFragment();
+                break;
+            case NAV_COLLAB_STUDY:
+                fragment = new GameOptionsFragment();
                 break;
             case NAV_BACKUP:
                 fragment = null;
