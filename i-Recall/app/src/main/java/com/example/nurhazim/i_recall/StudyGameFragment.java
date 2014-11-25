@@ -153,6 +153,9 @@ public class StudyGameFragment extends Fragment {
         int currentScore = Integer.valueOf(score.getText().toString());
         currentScore++;
         String newScore = "0" + String.valueOf(currentScore);
+
+        Animation beating = AnimationUtils.loadAnimation(getActivity(), R.anim.score_beat);
+        score.startAnimation(beating);
         score.setText(newScore);
     }
 

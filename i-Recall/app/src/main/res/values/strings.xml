@@ -37,10 +37,11 @@
     <string name="title_activity_study">StudyActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="beginning_score">00</string>
+    <string name="self_evaluation_question">Did you manage to recall the description correctly?</string>
 
     //buttons
-    <string name="button_wrong">Wrong</string>
-    <string name="button_correct">Correct</string>
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
     <string name="button_true">True</string>
     <string name="button_false">False</string>
     <string name="button_start">Start</string>

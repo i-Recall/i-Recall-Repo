@@ -1,6 +1,8 @@
 package com.example.nurhazim.i_recall;
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -38,22 +40,25 @@ public class CardFragment extends Fragment {
             textDescription = bundle.getString(StudyActivity.DESCRIPTION_KEY);
         }
 
-        final Button btnCorrect = (Button) rootView.findViewById(R.id.button_correct);
-        final Button btnWrong = (Button) rootView.findViewById(R.id.button_wrong);
+        final Button btnYes = (Button) rootView.findViewById(R.id.button_correct);
+        final Button btnNo = (Button) rootView.findViewById(R.id.button_wrong);
+        final TextView selfEval = (TextView) rootView.findViewById(R.id.self_evaluation_text);
 
-        btnCorrect.setOnClickListener(new View.OnClickListener() {
+        btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnCorrect.setVisibility(View.INVISIBLE);
-                btnWrong.setVisibility(View.INVISIBLE);
+                btnYes.setVisibility(View.INVISIBLE);
+                btnNo.setVisibility(View.INVISIBLE);
+                selfEval.setVisibility(View.INVISIBLE);
                 evaluated = true;
             }
         });
-        btnWrong.setOnClickListener(new View.OnClickListener() {
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnCorrect.setVisibility(View.INVISIBLE);
-                btnWrong.setVisibility(View.INVISIBLE);
+                btnYes.setVisibility(View.INVISIBLE);
+                btnNo.setVisibility(View.INVISIBLE);
+                selfEval.setVisibility(View.INVISIBLE);
                 evaluated = true;
             }
         });
@@ -67,13 +72,41 @@ public class CardFragment extends Fragment {
         flashcard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ObjectAnimator ascend = ObjectAnimator.ofFloat(flashcard, "cardElevation", 5f, 50f);
+                ascend.setDuration(720);
+                final ObjectAnimator descend = ObjectAnimator.ofFloat(flashcard, "cardElevation", 50f, 5f);
+                descend.setDuration(720);
+
                 Animation flashcardFlip = AnimationUtils.loadAnimation(getActivity(), R.anim.flashcard_flip);
                 flashcard.startAnimation(flashcardFlip);
-                ToggleText();
+                ascend.start();
+                ascend.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        descend.start();
+                        ToggleText();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
 
                 if (!evaluated) {
-                    btnCorrect.setVisibility(View.VISIBLE);
-                    btnWrong.setVisibility(View.VISIBLE);
+                    btnYes.setVisibility(View.VISIBLE);
+                    btnNo.setVisibility(View.VISIBLE);
+                    selfEval.setVisibility(View.VISIBLE);
                 }
             }
         });

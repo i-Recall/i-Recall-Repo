@@ -5,9 +5,24 @@
 
     <rotate
         android:fromDegrees="0"
-        android:toDegrees="1440"
+        android:toDegrees="1080"
         android:pivotX="50%"
-        android:duration="180"
+        android:pivotY="50%"
+        android:duration="1440"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+    <translate
+        android:fromYDelta="0%"
+        android:toYDelta="-50%"
+        android:duration="720"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:fillAfter="true"/>
+
+    <translate
+        android:fromYDelta="0%"
+        android:toYDelta="50%"
+        android:duration="720"
+        android:startOffset="722"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
 
 </set>
