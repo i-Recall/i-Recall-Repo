@@ -13,7 +13,7 @@ import android.widget.TextView;
 /**
  * Created by NurHazim on 05-Nov-14.
  */
-public class GameCardFragment extends Fragment {
+public class SingleSideCardFragment extends Fragment {
     private String textTerm = "This is a term";
     private String textDescription = "This is a description";
 

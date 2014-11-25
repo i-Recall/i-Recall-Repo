@@ -30,9 +30,6 @@ import java.util.List;
 public class StudyGameFragment extends Fragment {
     private static final String LOG_TAG = StudyGameFragment.class.getSimpleName();
 
-    public static final String TERM_KEY = "term";
-    public static final String DESCRIPTION_KEY = "description";
-
     private NoSwipeViewPager mPagerPlayer1;
     private NoSwipeViewPager mPagerPlayer2;
     private ScreenSlidePagerAdapter mPagerAdapterPlayer1;
@@ -265,9 +262,9 @@ public class StudyGameFragment extends Fragment {
         public android.support.v4.app.Fragment getItem(int i) {
             mCursor.moveToPosition(i);
             Bundle bundle = new Bundle();
-            bundle.putString(TERM_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM)));
+            bundle.putString(StudyActivity.TERM_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM)));
             mCursor.moveToPosition(shuffledDescriptions.get(i));
-            bundle.putString(DESCRIPTION_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION)));
+            bundle.putString(StudyActivity.DESCRIPTION_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION)));
 
             if(i == shuffledDescriptions.get(i)){
                 answers.add(true);
@@ -276,9 +273,9 @@ public class StudyGameFragment extends Fragment {
                 answers.add(false);
             }
 
-            GameCardFragment gameCardFragment = new GameCardFragment();
-            gameCardFragment.setArguments(bundle);
-            return gameCardFragment;
+            SingleSideCardFragment singleSideCardFragment = new SingleSideCardFragment();
+            singleSideCardFragment.setArguments(bundle);
+            return singleSideCardFragment;
         }
 
         @Override

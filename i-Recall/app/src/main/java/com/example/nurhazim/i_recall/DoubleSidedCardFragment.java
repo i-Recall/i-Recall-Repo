@@ -18,7 +18,7 @@ import android.widget.TextView;
 /**
  * Created by NurHazim on 05-Nov-14.
  */
-public class CardFragment extends Fragment {
+public class DoubleSidedCardFragment extends Fragment {
     private boolean showingFront = true;
     private String textTerm = "This is a term";
     private String textDescription = "This is a description";

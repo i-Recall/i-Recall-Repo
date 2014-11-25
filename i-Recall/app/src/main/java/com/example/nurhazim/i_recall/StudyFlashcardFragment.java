@@ -34,7 +34,7 @@ public class StudyFlashcardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.card_pager, container, false);
 
         Bundle bundle = getArguments();
-        if(bundle != null){
+        if(bundle != null && bundle.containsKey(SingleDeckFragment.DECK_NAME_KEY)){
             mCurrentDeckName = bundle.getString(SingleDeckFragment.DECK_NAME_KEY);
             mCursor = getActivity().getContentResolver().query(
                     CardsContract.CardEntry.buildCardWithDeckID(Utility.getDeckId(getActivity(), mCurrentDeckName)),
@@ -63,9 +63,9 @@ public class StudyFlashcardFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString(StudyActivity.TERM_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM)));
             bundle.putString(StudyActivity.DESCRIPTION_KEY, mCursor.getString(mCursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION)));
-            CardFragment cardFragment = new CardFragment();
-            cardFragment.setArguments(bundle);
-            return cardFragment;
+            DoubleSidedCardFragment doubleSidedCardFragment = new DoubleSidedCardFragment();
+            doubleSidedCardFragment.setArguments(bundle);
+            return doubleSidedCardFragment;
         }
 
         @Override
