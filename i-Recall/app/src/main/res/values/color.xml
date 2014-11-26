@@ -8,5 +8,6 @@
     <color name="light_grey">#eceff1</color>
     <color name="button_negative">#F44336</color>
     <color name="button_positive">#4CAF50</color>
+    <color name="white">#ffffff</color>
 
 </resources>

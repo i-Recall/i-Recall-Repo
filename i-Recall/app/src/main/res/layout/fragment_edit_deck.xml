@@ -2,15 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="com.example.nurhazim.i_recall.EditDeckActivity$PlaceholderFragment">
 
     <EditText
         android:id="@+id/edit_deck_name_text"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_deck_name"
@@ -18,6 +15,8 @@
 
     <ListView
         android:id="@+id/edit_deck_list_view"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         style="@style/EditCard"
@@ -27,14 +26,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/color_primary"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <EditText
             android:id="@+id/new_card_term"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="@string/hint_card_term"/>
+            android:hint="@string/hint_card_term"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/white"/>
 
         <EditText
             android:id="@+id/new_card_description"
@@ -43,7 +48,10 @@
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
-            android:hint="@string/hint_card_description"/>
+            android:hint="@string/hint_card_description"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

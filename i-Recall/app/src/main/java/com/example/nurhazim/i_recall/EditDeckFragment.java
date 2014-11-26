@@ -21,6 +21,7 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
 
@@ -35,7 +36,7 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
     private boolean mTitleEdited = false;
     private boolean mCardEdited = false;
 
-    private static final int CARD_LOADER = 0;
+    private static final int CARD_LOADER = 1;
 
     private static final String[] CARD_COLUMNS = {
             CardsContract.CardEntry.TABLE_NAME + "." + CardsContract.CardEntry._ID,
@@ -199,7 +200,7 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private class CardsAdapter extends CursorAdapter {
-        EditText mEditTerm, mEditDescription;
+        ViewHolder viewHolder;
 
         public CardsAdapter(Context context, Cursor cursor, int flags){
             super(context, cursor, flags);
@@ -209,32 +210,37 @@ public class EditDeckFragment extends Fragment implements LoaderManager.LoaderCa
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View view = LayoutInflater.from(context).inflate(R.layout.list_item_edit_deck, parent, false);
 
-            mEditTerm = (EditText) view.findViewById(R.id.edit_card_term);
-            mEditDescription = (EditText) view.findViewById(R.id.edit_card_description);
-
-            mEditTerm.setText(cursor.getString(EditDeckFragment.COL_CARD_TERM));
-            mEditDescription.setText(cursor.getString(EditDeckFragment.COL_CARD_DESCRIPTION));
+            viewHolder = new ViewHolder(view);
+            view.setTag(viewHolder);
 
             return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            ViewHolder viewHolder = (ViewHolder) view.getTag();
+
+            viewHolder.editTerm.setText(cursor.getString(EditDeckFragment.COL_CARD_TERM));
+            viewHolder.editDescription.setText(cursor.getString(EditDeckFragment.COL_CARD_DESCRIPTION));
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-
-            mEditTerm.addTextChangedListener(new SimpleTextWatcher(mEditTerm));
-            mEditDescription.addTextChangedListener(new SimpleTextWatcher(mEditDescription));
-
-            return view;
+            if(viewHolder != null) {
+                viewHolder.editTerm.addTextChangedListener(new SimpleTextWatcher(viewHolder.editTerm));
+                viewHolder.editDescription.addTextChangedListener(new SimpleTextWatcher(viewHolder.editDescription));
+            }
+            return super.getView(position, convertView, parent);
         }
+    }
 
-        @Override
-        public Object getItem(int position) {
-            return super.getItem(position);
+    public static class ViewHolder{
+        public final TextView editTerm;
+        public final TextView editDescription;
+
+        public ViewHolder(View view){
+            editTerm = (EditText) view.findViewById(R.id.edit_card_term);
+            editDescription = (EditText) view.findViewById(R.id.edit_card_description);
         }
     }
 
