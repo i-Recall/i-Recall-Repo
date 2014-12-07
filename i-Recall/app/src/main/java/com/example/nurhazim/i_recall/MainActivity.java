@@ -38,7 +38,6 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,8 +110,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-
-
         if(menu.findItem(R.id.action_new_deck) != null) {
             menu.findItem(R.id.action_new_deck).setVisible(!drawerOpen);
         }
