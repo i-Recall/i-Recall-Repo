@@ -2,6 +2,9 @@
 <resources>
     <string-array name="nav_drawer_items">
         <item>All Decks</item>
+        <item>Collaborative Studying</item>
         <item>Backup</item>
+        <item>Search</item>
+        <item>Import/ Export</item>
     </string-array>
 </resources>

@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:id="@+id/content"
+        android:layout_weight="1">
+
+        <android.support.v7.widget.CardView
+            android:padding="16dp"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/card_min_height"
+            android:layout_width="match_parent"
+            android:id="@+id/cardview_flashcard"
+            android:layout_gravity="center|center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/card_min_height"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/cardview_text"/>
+
+        </android.support.v7.widget.CardView>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/self_evaluation_text"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/self_evaluation_question"
+        android:visibility="invisible"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="16dp">
+
+        <Button
+            android:id="@+id/button_wrong"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_no"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/button_correct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_yes"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+</LinearLayout>

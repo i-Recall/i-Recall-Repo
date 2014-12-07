@@ -12,23 +12,18 @@
         android:background="@drawable/deck_background">
 
         <Button
+            android:id="@+id/button_flashcards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/study_flashcard"/>
 
         <Button
+            android:id="@+id/button_truefalse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/study_true_false"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/study_game"/>
-
     </LinearLayout>
 
     <ListView
