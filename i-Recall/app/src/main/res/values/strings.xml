@@ -68,5 +68,10 @@
     <string name="title_export_decks">Export Deck</string>
     <string name="action_export_deck">Export Deck</string>
 
+    <!-- Backup Restore strings -->
+    <string name="backup_whole_database">Backup Whole Database</string>
+    <string name="restore_whole_database">Restore Whole Database</string>
+
+
 
 </resources>

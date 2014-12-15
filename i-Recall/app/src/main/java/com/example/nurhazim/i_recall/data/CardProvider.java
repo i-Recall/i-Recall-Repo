@@ -147,6 +147,11 @@ public class CardProvider extends ContentProvider {
         return true;
     }
 
+    public void resetDatabase() {
+        mOpenHelper.close();
+        mOpenHelper = new CardsDbHelper(getContext());
+    }
+
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;

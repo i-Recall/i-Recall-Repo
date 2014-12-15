@@ -157,7 +157,7 @@ public class MainActivity extends ActionBarActivity {
                 fragment = new GameOptionsFragment();
                 break;
             case NAV_BACKUP:
-                fragment = null;
+                fragment = new BackupFragment();
                 break;
             case NAV_SEARCH:
                 fragment = new SearchFragment();

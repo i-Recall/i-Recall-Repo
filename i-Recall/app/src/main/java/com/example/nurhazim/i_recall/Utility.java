@@ -1,19 +1,28 @@
 package com.example.nurhazim.i_recall;
 
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
+import com.example.nurhazim.i_recall.data.CardProvider;
 import com.example.nurhazim.i_recall.data.CardsContract;
+import com.example.nurhazim.i_recall.data.CardsDbHelper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -321,4 +330,115 @@ public class Utility {
 
         Log.v(context.getClass().getSimpleName(), deckCounter + " deck(s) exported");
     }
+
+    // Adrian: newly added
+    public static String getNowDateTimeString()
+    {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(cal.getTime());
+    }
+
+    // Adrian: newly added
+    public static String getNowDateTimeStringNoSymbols()
+    {
+        String result = getNowDateTimeString();
+        result = result.replace("-", "");
+        result = result.replace(" ", "");
+        result = result.replace(":", "");
+
+        return result;
+    }
+
+    /**
+     * // Adrian: newly added
+     * Do the real backup of database here
+     * @param context Context of the app
+     * @param fullPathOfDirectory The directory to save the backup file
+     * @return The full backup file string
+     */
+    public static String BackupDatabase(Context context, String fullPathOfDirectory) {
+        try
+        {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite())
+            {
+                // our current database file path
+                String currentDBPath = "//data//com.example.nurhazim.i_recall//databases//" + CardsDbHelper.DATABASE_NAME;
+                //String backupDBPath = CardsDbHelper.DATABASE_NAME + "_" + getNowDateTimeStringNoSymbols() + ".sql";
+                String backupDBPath = "cards_" + getNowDateTimeStringNoSymbols() + ".db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(fullPathOfDirectory, backupDBPath);
+
+                // copy the existing database file path to backup path
+                if (currentDB.exists())
+                {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    return backupDB.getAbsolutePath();
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+        return "";
+    }
+
+    /**
+     * // Adrian: newly added
+     * Do the real database restore here
+     * @param context The context of the app
+     * @param fullPathOfFile The full path of the restore file
+     * @return 0 for failure, 1 for success
+     */
+    public static long RestoreDatabase(Context context, String fullPathOfFile) {
+        long result = 0;
+        try
+        {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite())
+            {
+                // path of exiting database file
+                String currentDBPath = "//data//com.example.nurhazim.i_recall//databases//" + CardsDbHelper.DATABASE_NAME;
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(fullPathOfFile);
+
+                // copy the restore file into existing database file, overwrite existing database file
+                if (currentDB.exists())
+                {
+                    FileChannel src = new FileInputStream(backupDB).getChannel();
+                    FileChannel dst = new FileOutputStream(currentDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+
+                    // after the database copy is done, we need to reset the database to load the newly overwritten database
+                    ContentResolver resolver = context.getContentResolver();
+                    ContentProviderClient client = resolver.acquireContentProviderClient("myAuthority");
+                    CardProvider provider = (CardProvider) client.getLocalContentProvider();
+                    provider.resetDatabase();
+                    client.release();
+
+                    result = 1;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        return result;
+    }
+
+
 }
