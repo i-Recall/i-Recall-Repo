@@ -2,18 +2,13 @@ package com.example.nurhazim.i_recall;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -24,11 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -43,6 +36,8 @@ public class ImportExportFragment extends Fragment implements LoaderManager.Load
     private static final int DECK_LOADER = 0;
     public static final int PICK_IMPORT_TEXT_FILE = 1;
     public static final int PICK_EXPORT_TEXT_FILE = 2;
+    public static final int PICK_EXPORT_XLS_FILE = 3;
+
     Vector<Long> toExport;
 
     private static final String LOG_TAG = DecksFragment.class.getSimpleName();
@@ -124,6 +119,20 @@ public class ImportExportFragment extends Fragment implements LoaderManager.Load
         startActivityForResult(intent, PICK_EXPORT_TEXT_FILE);
     }
 
+    private void doXlsExport()
+    {
+        Intent intent = new Intent(this.getActivity(), FileDialog.class);
+        intent.putExtra(FileDialog.START_PATH, "/sdcard");
+
+        //can user select directories or not
+        intent.putExtra(FileDialog.CAN_SELECT_DIR, false);
+
+        intent.putExtra(FileDialog.SELECTION_MODE, SelectionMode.MODE_CREATE);
+
+        startActivityForResult(intent, PICK_EXPORT_XLS_FILE);
+    }
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
         switch (requestCode)
@@ -147,6 +156,18 @@ public class ImportExportFragment extends Fragment implements LoaderManager.Load
                         String filePath = intent.getStringExtra(FileDialog.RESULT_PATH);
                         Toast.makeText(this.getActivity(), "Export file path " + filePath, Toast.LENGTH_SHORT).show();
                         Utility.ExportDeck(getActivity(), toExport,filePath);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this.getActivity(), e.getMessage() , Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case (PICK_EXPORT_XLS_FILE):
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        String filePath = intent.getStringExtra(FileDialog.RESULT_PATH);
+                        Toast.makeText(this.getActivity(), "Export xls file path " + filePath, Toast.LENGTH_SHORT).show();
+                        Utility.ExportDeckToXls(getActivity(), toExport,filePath);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(this.getActivity(), e.getMessage() , Toast.LENGTH_SHORT).show();
@@ -222,7 +243,34 @@ public class ImportExportFragment extends Fragment implements LoaderManager.Load
                                 mDeckAdapter.getCursor().moveToPosition(itemIndex);
                                 toExport.add(mDeckAdapter.getCursor().getLong(mDeckAdapter.getCursor().getColumnIndex(CardsContract.DeckEntry._ID)));
                             }
-                            doExport();
+                            // Adrian: newly added for xls or txt mode export
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle(R.string.dialog_export_mode)
+                                    .setSingleChoiceItems(R.array.export_mode_choice_array, -1, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // The 'which' argument contains the index position
+                                            // of the selected item
+                                            //Toast.makeText(getActivity(), "Export mode choice is " + which, Toast.LENGTH_SHORT).show();
+                                            if (which == 0) // user choose the txt export mode
+                                            {
+                                                doExport();
+                                            }
+                                            else if (which == 1) // user choose the xls export mode
+                                            {
+                                                doXlsExport();
+                                            }
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            AlertDialog chooseExportModeDialog = builder.create();
+                            chooseExportModeDialog.show();
+
                         }
                         mode.finish();
                         return true;

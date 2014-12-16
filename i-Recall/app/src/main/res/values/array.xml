@@ -7,4 +7,9 @@
         <item>Search</item>
         <item>Import/ Export</item>
     </string-array>
+
+    <string-array name="export_mode_choice_array">
+        <item>txt Mode</item>
+        <item>xls Mode</item>
+    </string-array>
 </resources>

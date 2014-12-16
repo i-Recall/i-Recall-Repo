@@ -26,6 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 /**
  * Created by NurHazim on 17-Oct-14.
  */
@@ -329,6 +334,65 @@ public class Utility {
         }
 
         Log.v(context.getClass().getSimpleName(), deckCounter + " deck(s) exported");
+    }
+
+    /**
+     * // Adrian: newly added
+     * Export the selected decks with it's cards to .xls file
+     * @param context The app context
+     * @param id The list of deck's id
+     * @param fileName The fullpath file name of the .txt file
+     */
+    public static void ExportDeckToXls(Context context, Vector<Long> id, String fileName){
+        int deckCounter = 0;
+
+        try
+        {
+            // create a new xls workbook file here
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(fileName));
+
+            for(Long deckId : id){
+                String deckName = getDeckName(context,deckId);
+                //create a sheet for each deck
+                WritableSheet sheet = workbook.createSheet(deckName, deckCounter);
+
+                Cursor cursor = context.getContentResolver().query(
+                        CardsContract.CardEntry.buildCardWithDeckID(deckId),
+                        new String[]{CardsContract.CardEntry._ID, CardsContract.CardEntry.COLUMN_TERM,CardsContract.CardEntry.COLUMN_DESCRIPTION},
+                        null,
+                        null,
+                        null
+                );
+
+                Vector<Long> cardsToExport = new Vector<Long>();
+                int rowCounter = 0;
+                if(cursor.moveToFirst()){
+                    do{
+                        //cardsToExport.add(cursor.getLong(cursor.getColumnIndex(CardsContract.CardEntry._ID)));
+                        String term = cursor.getString(cursor.getColumnIndex(CardsContract.CardEntry.COLUMN_TERM));
+                        String description = cursor.getString(cursor.getColumnIndex(CardsContract.CardEntry.COLUMN_DESCRIPTION));
+
+                        // create cell labels
+                        Label termLabel = new Label(0, rowCounter, term);
+                        Label descriptionLabel = new Label(1, rowCounter, description);
+                        // add cell labels to cells
+                        sheet.addCell(termLabel);
+                        sheet.addCell(descriptionLabel);
+                        rowCounter++;
+                    }while(cursor.moveToNext());
+                }
+                cursor.close();
+                deckCounter++;
+            }
+            workbook.write();
+            workbook.close();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        Log.v(context.getClass().getSimpleName(), deckCounter + " deck(s) exported to xls");
     }
 
     // Adrian: newly added

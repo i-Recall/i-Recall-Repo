@@ -59,6 +59,7 @@
     <string name="cancel">Cancel</string>
     <string name="create">Save</string>
     <string name="no_data">No Data</string>
+    <string name="dialog_export_mode">Please choose your export mode</string>
 
     <!-- Import related strings -->
     <string name="title_import_decks">Import Deck</string>
