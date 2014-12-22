@@ -8,6 +8,7 @@
     <string name="action_edit">Edit</string>
     <string name="action_new_card">New Card</string>
     <string name="action_delete">Delete</string>
+    <string name="action_online_game">Play online game</string>
 
     //dialog items
     <string name="dialog_hint_deck_name">New Deck Name</string>
@@ -15,6 +16,10 @@
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_save_message">Would you like to save changes?</string>
     <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_accept">Accept</string>
+    <string name="dialog_button_decline">Decline</string>
+    <string name="dialog_new_invitation"> is inviting you to a new study session for </string>
+    <string name="dialog_title_invitation">New Invitation</string>
 
     //App bar titles
     <string name="title_decks">All Decks</string>
@@ -45,5 +50,7 @@
     <string name="button_true">True</string>
     <string name="button_false">False</string>
     <string name="button_start">Start</string>
+    <string name="button_refresh">Refresh</string>
+    <string name="button_sign_out">Sign Out</string>
 
 </resources>

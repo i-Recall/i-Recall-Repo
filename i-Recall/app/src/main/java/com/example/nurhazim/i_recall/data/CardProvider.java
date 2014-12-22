@@ -15,18 +15,21 @@ import android.util.Log;
 public class CardProvider extends ContentProvider {
     private static final String LOG_TAG = ContentProvider.class.getSimpleName();
 
-    private static final int DECK = 100;
-    private static final int DECK_WITH_NAME = 101;
-    private static final int DECK_WITH_ID = 102;
-    private static final int CARD = 300;
-    private static final int CARD_WITH_DECK_ID = 301;
-    //private static final int CARD_WITH_CARD_ID = 302;
+    private static final int DECK = 0;
+    private static final int DECK_WITH_NAME = 1;
+    private static final int DECK_WITH_ID = 2;
+    private static final int CARD = 100;
+    private static final int CARD_WITH_DECK_ID = 101;
+    private static final int USER_PERFORMANCE = 1000;
+    private static final int USER_PERFORMANCE_WITH_DECK_ID_AND_STUDY_METHOD = 1001;
+    private static final int PLAYER = 2000;
+    private static final int PLAYER_WITH_ID = 2001;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private CardsDbHelper mOpenHelper;
     
-//    this can be used for reference if every need to
+//    this can be used for reference if ever need to
 //    private static final SQLiteQueryBuilder sQueryBuilder;
 //
 //    static {
@@ -46,9 +49,20 @@ public class CardProvider extends ContentProvider {
     private static final String sDeckWithID =
             CardsContract.DeckEntry.TABLE_NAME +
                     "." + CardsContract.DeckEntry._ID + " = ?";
+
     private static final String sCardWithID =
             CardsContract.CardEntry.TABLE_NAME +
                     "." + CardsContract.CardEntry.COLUMN_DECK_KEY + " = ? ";
+
+    private static final String sPlayerWithID =
+            CardsContract.PlayerEntry.TABLE_NAME +
+                    "." + CardsContract.PlayerEntry._ID + " = ?";
+
+    private static final String sPerformanceWithDeckIdAndStudyMethod =
+            CardsContract.UserPerformanceEntry.TABLE_NAME +
+                    "." + CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY + " = ? AND " +
+            CardsContract.UserPerformanceEntry.TABLE_NAME +
+                    "." + CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD + " = ?";
 
     private Cursor getDeckWithName(Uri uri, String[] projection, String sortOder){
         String selection = sDeckWithNameSelection;
@@ -96,6 +110,41 @@ public class CardProvider extends ContentProvider {
                 sortOrder);
     }
 
+    private Cursor getPlayerWithId(Uri uri, String[] projection, String sortOrder){
+        String playerId = CardsContract.PlayerEntry.getPlayerIdFromUri(uri);
+
+        String selection = sPlayerWithID;
+        String[] selectionArgs = new String[]{playerId};
+
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.PlayerEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor getPerformanceWithDeckIdAndStudyMethod(Uri uri, String[] projection, String sortOrder){
+        String DeckId = CardsContract.UserPerformanceEntry.getDeckIdFromUri(uri);
+        String studyMethod = CardsContract.UserPerformanceEntry.getStudyMethodFromUri(uri);
+
+        String selection = sPerformanceWithDeckIdAndStudyMethod;
+        String[] selectionArgs = new String[]{DeckId, studyMethod};
+
+        return mOpenHelper.getReadableDatabase().query(
+                CardsContract.UserPerformanceEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
 
     public static UriMatcher buildUriMatcher(){
         final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -106,8 +155,13 @@ public class CardProvider extends ContentProvider {
         sURIMatcher.addURI(authority, CardsContract.PATH_DECK + "/*", DECK_WITH_NAME);
 
         sURIMatcher.addURI(authority, CardsContract.PATH_CARD, CARD);
-        //sURIMatcher.addURI(authority, CardsContract.PATH_CARD + "/#", CARD_WITH_CARD_ID);
         sURIMatcher.addURI(authority, CardsContract.PATH_CARD + "/#", CARD_WITH_DECK_ID);
+
+        sURIMatcher.addURI(authority, CardsContract.PATH_PLAYER, PLAYER);
+        sURIMatcher.addURI(authority, CardsContract.PATH_PLAYER + "/#", PLAYER_WITH_ID);
+
+        sURIMatcher.addURI(authority, CardsContract.PATH_USER_PERFORMANCE, USER_PERFORMANCE);
+        sURIMatcher.addURI(authority, CardsContract.PATH_USER_PERFORMANCE + "/#/#", USER_PERFORMANCE_WITH_DECK_ID_AND_STUDY_METHOD);
 
         return sURIMatcher;
     }
@@ -153,6 +207,23 @@ public class CardProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
+            case USER_PERFORMANCE_WITH_DECK_ID_AND_STUDY_METHOD:
+                retCursor = getPerformanceWithDeckIdAndStudyMethod(uri, projection, sortOrder);
+                break;
+            case PLAYER_WITH_ID:
+                retCursor = getPlayerWithId(uri, projection, sortOrder);
+                break;
+            case PLAYER:
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CardsContract.PlayerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -175,6 +246,14 @@ public class CardProvider extends ContentProvider {
                 return CardsContract.CardEntry.CONTENT_TYPE;
             case CARD:
                 return CardsContract.CardEntry.CONTENT_TYPE;
+            case PLAYER_WITH_ID:
+                return CardsContract.PlayerEntry.CONTENT_ITEM_TYPE;
+            case PLAYER:
+                return CardsContract.PlayerEntry.CONTENT_TYPE;
+            case USER_PERFORMANCE:
+                return CardsContract.UserPerformanceEntry.CONTENT_ITEM_TYPE;
+            case USER_PERFORMANCE_WITH_DECK_ID_AND_STUDY_METHOD:
+                return CardsContract.UserPerformanceEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -201,6 +280,24 @@ public class CardProvider extends ContentProvider {
                 _id = db.insert(CardsContract.CardEntry.TABLE_NAME, null, values);
                 if(_id > 0){
                     returnUri = CardsContract.CardEntry.buildCardUri(_id);
+                }
+                else{
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case PLAYER:
+                _id = db.insert(CardsContract.PlayerEntry.TABLE_NAME, null, values);
+                if(_id > 0){
+                    returnUri = CardsContract.PlayerEntry.buildPlayerUri(_id);
+                }
+                else{
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case USER_PERFORMANCE:
+                _id = db.insert(CardsContract.UserPerformanceEntry.TABLE_NAME, null, values);
+                if(_id > 0){
+                    returnUri = CardsContract.UserPerformanceEntry.buildPerformanceUri(_id);
                 }
                 else{
                     throw new SQLException("Failed to insert row into " + uri);

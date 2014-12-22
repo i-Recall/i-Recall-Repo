@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_online_game"
+        android:title="@string/action_online_game"
+        android:icon="@drawable/ic_internet"
+        app:showAsAction="always"/>
+
+</menu>

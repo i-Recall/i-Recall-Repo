@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-library\assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-library\src\debug\assets" />
+    </dataSet>
+
+</merger>

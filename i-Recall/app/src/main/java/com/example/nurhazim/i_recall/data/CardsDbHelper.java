@@ -3,8 +3,10 @@ package com.example.nurhazim.i_recall.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.example.nurhazim.i_recall.data.CardsContract.CardEntry;
 import com.example.nurhazim.i_recall.data.CardsContract.DeckEntry;
+import com.example.nurhazim.i_recall.data.CardsContract.PlayerEntry;
 
 /**
  * Created by NurHazim on 13-Oct-14.
@@ -44,14 +46,33 @@ public class CardsDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + CardEntry.COLUMN_DECK_KEY + ") REFERENCES " +
                 DeckEntry.TABLE_NAME + " (" + DeckEntry._ID + "));";
 
+        final String SQL_CREATE_PLAYER_TABLE = "CREATE TABLE " + PlayerEntry.TABLE_NAME + " (" +
+                PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PlayerEntry.COLUMN_PLAYER_NAME + " TEXT NOT NULL);";
+
+        final String SQL_CREATE_USER_PERFORMANCE_TABLE = "CREATE TABLE " + CardsContract.UserPerformanceEntry.TABLE_NAME + " (" +
+                CardsContract.UserPerformanceEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+
+                CardsContract.UserPerformanceEntry.COLUMN_DATE + " TEXT NOT NULL, " +
+                CardsContract.UserPerformanceEntry.COLUMN_DURATION + " INTEGER NOT NULL, " +
+                CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD + " INTEGER NOT NULL, " +
+                CardsContract. UserPerformanceEntry.COLUMN_DECK_KEY + " INTEGER NOT NULL, " +
+
+                " FOREIGN KEY (" + CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY + ") REFERENCES " +
+                DeckEntry.TABLE_NAME + " (" + DeckEntry._ID + "));";
+
         db.execSQL(SQL_CREATE_DECK_TABLE);
         db.execSQL(SQL_CREATE_CARD_TABLE);
+        db.execSQL(SQL_CREATE_PLAYER_TABLE);
+        db.execSQL(SQL_CREATE_USER_PERFORMANCE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + DeckEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CardEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PlayerEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CardsContract.UserPerformanceEntry.TABLE_NAME);
         onCreate(db);
     }
 }

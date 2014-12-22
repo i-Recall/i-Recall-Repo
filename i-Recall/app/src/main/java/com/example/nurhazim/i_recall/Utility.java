@@ -6,6 +6,9 @@ import android.util.Log;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -81,5 +84,48 @@ public class Utility {
             );
         }
         Log.v(context.getClass().getSimpleName(), affected + " deck(s) deleted");
+    }
+
+    public static String GetDate(Context context){
+        Calendar currentDate = Calendar.getInstance();
+        int day = currentDate.get(Calendar.DAY_OF_MONTH);
+        int month = currentDate.get(Calendar.MONTH);
+        int year = currentDate.get(Calendar.YEAR);
+
+        String[] months = context.getResources().getStringArray(R.array.months);
+        return String.valueOf(day) + ", " + months[month] + " " + String.valueOf(year);
+    }
+
+    public static List<String> GetArrayListOfDecks(Context context){
+        Cursor deckCursor = context.getContentResolver().query(
+                CardsContract.DeckEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        List<String> allDecks = new ArrayList<String>(deckCursor.getCount());
+
+        if(deckCursor.moveToFirst()) {
+            do {
+                allDecks.add(deckCursor.getString(deckCursor.getColumnIndex(CardsContract.DeckEntry.COLUMN_DECK_NAME)));
+            } while (deckCursor.moveToNext());
+        }
+        else{
+            allDecks.add("No decks to study with");
+        }
+        return allDecks;
+    }
+
+    public static List<String> GetArrayListOfStudyMethods(){
+        List<String> allStudyMethod = new ArrayList<String>();
+
+        //make sure this arrangement as the one in StudyActivity
+        allStudyMethod.add("Flashcards");
+        allStudyMethod.add("True / False");
+        allStudyMethod.add("Game");
+
+        return allStudyMethod;
     }
 }

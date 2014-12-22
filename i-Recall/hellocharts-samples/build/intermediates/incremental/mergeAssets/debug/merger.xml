@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="21.0.2" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\assets" />
+    </dataSet>
+    <dataSet config="21.0.2" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.2\assets" />
+    </dataSet>
+    <dataSet config="unspecified" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\build\intermediates\exploded-aar\i-Recall\hellocharts-library\unspecified\assets" />
+    </dataSet>
+    <dataSet config="main" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\assets" >
+            <file
+                name="Roboto-Bold.ttf"
+                path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\assets\Roboto-Bold.ttf" />
+            <file
+                name="Roboto-BoldItalic.ttf"
+                path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\assets\Roboto-BoldItalic.ttf" />
+            <file
+                name="Roboto-Italic.ttf"
+                path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\assets\Roboto-Italic.ttf" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\NurHazim\AndroidStudioProjects\i-Recall-Repo\i-Recall\hellocharts-samples\src\debug\assets" />
+    </dataSet>
+
+</merger>

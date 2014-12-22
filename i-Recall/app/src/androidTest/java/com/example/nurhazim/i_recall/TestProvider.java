@@ -3,19 +3,17 @@ package com.example.nurhazim.i_recall;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.example.nurhazim.i_recall.data.CardsContract;
 import com.example.nurhazim.i_recall.data.CardsContract.CardEntry;
 import com.example.nurhazim.i_recall.data.CardsContract.DeckEntry;
-import com.example.nurhazim.i_recall.data.CardsDbHelper;
+import com.example.nurhazim.i_recall.data.CardsContract.PlayerEntry;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * Created by NurHazim on 13-Oct-14.
@@ -219,6 +217,57 @@ public class TestProvider extends AndroidTestCase {
         );
 
         validateCursor(cursor, updatedValues);
+    }
+
+    public void testInsertReadPlayers(){
+        ContentValues newPlayer1 = new ContentValues();
+        newPlayer1.put(PlayerEntry.COLUMN_PLAYER_NAME, "John");
+
+        ContentValues newPlayer2 = new ContentValues();
+        newPlayer2.put(PlayerEntry.COLUMN_PLAYER_NAME, "Jack");
+
+        Uri insertPlayer1 = mContext.getContentResolver().insert(PlayerEntry.CONTENT_URI, newPlayer1);
+        Uri insertPlayer2 = mContext.getContentResolver().insert(PlayerEntry.CONTENT_URI, newPlayer2);
+
+        assertTrue(ContentUris.parseId(insertPlayer1) != -1);
+        assertTrue(ContentUris.parseId(insertPlayer2) != -1);
+
+        Cursor playerCursor = mContext.getContentResolver().query(
+                PlayerEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        validateCursor(playerCursor, newPlayer1);
+    }
+
+    public void testInsertReadUserPerformance(){
+        String date = Utility.GetDate();
+
+        ContentValues newPerformance = new ContentValues();
+        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DATE, date);
+        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DURATION, 30);
+        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD, StudyActivity.MODE_FLASHCARDS);
+        Log.v(LOG_TAG, "The date saved is " + date);
+        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY, 1);
+
+        Uri insertPerformance = mContext.getContentResolver().insert(
+                CardsContract.UserPerformanceEntry.CONTENT_URI,newPerformance);
+
+        long rowId = ContentUris.parseId(insertPerformance);
+        assertTrue(rowId != -1);
+
+        Cursor performanceCursor = mContext.getContentResolver().query(
+                CardsContract.UserPerformanceEntry.buildPerformanceWithDeckIdAndStudyMethod(1, StudyActivity.MODE_FLASHCARDS),
+                null,
+                null,
+                null,
+                null
+        );
+
+        validateCursor(performanceCursor, newPerformance);
     }
 
     public void testDeleteRecordsAtEnd(){

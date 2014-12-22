@@ -1,0 +1,67 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/color_primary_dark">
+
+    <LinearLayout
+        android:id="@+id/sign_in_layout"
+        android:orientation="vertical"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@android:color/background_light">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+
+        <!-- sign-in button -->
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:padding="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <!-- sign-out button -->
+        <Button
+            android:id="@+id/sign_out_button"
+            android:padding="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_sign_out"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spinner_deck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/dropdownListPreferredItemHeight"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/button_start_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_start"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/game_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <include layout="@layout/true_false_pager"/>
+
+    </FrameLayout>
+
+</FrameLayout>

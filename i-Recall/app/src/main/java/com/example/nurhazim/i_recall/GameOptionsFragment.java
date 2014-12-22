@@ -2,17 +2,17 @@ package com.example.nurhazim.i_recall;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-
-import com.example.nurhazim.i_recall.data.CardsContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,21 +39,7 @@ public class GameOptionsFragment extends Fragment {
         players.add("John");
         players.add("Jeep");
 
-        Cursor cursor = getActivity().getContentResolver().query(
-                CardsContract.DeckEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-
-        cursor.moveToFirst();
-
-        List<String> decks = new ArrayList<String>();
-
-        do{
-            decks.add(cursor.getString(cursor.getColumnIndex(CardsContract.DeckEntry.COLUMN_DECK_NAME)));
-        }while(cursor.moveToNext());
+        List<String> decks = Utility.GetArrayListOfDecks(getActivity());
 
         ArrayAdapter<String> spinnerPlayerAdapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -86,6 +72,25 @@ public class GameOptionsFragment extends Fragment {
             }
         });
 
+        setHasOptionsMenu(true);
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_game_option, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_online_game:
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

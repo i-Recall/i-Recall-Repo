@@ -32,6 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private static final int NAV_ALL_DECKS = 0;
     private static final int NAV_COLLAB_STUDY = 1;
     private static final int NAV_BACKUP = 2;
+    private static final int NAV_USER_PERFORMANCE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +154,9 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case NAV_BACKUP:
                 fragment = null;
+                break;
+            case NAV_USER_PERFORMANCE:
+                fragment = new UserPerformanceFragment();
                 break;
             default:
                 fragment = null;
