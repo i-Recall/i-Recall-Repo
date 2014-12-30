@@ -5,6 +5,7 @@
 
     <uses-sdk tools:node="replace" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -56,6 +57,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.SingleDeckActivity" />
         </activity>
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

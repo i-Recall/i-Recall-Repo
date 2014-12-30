@@ -296,7 +296,7 @@ public class Utility {
 
         try {
 
-            BufferedWriter br = new BufferedWriter(new FileWriter(fileName));
+            BufferedWriter br = new BufferedWriter(new FileWriter(fileName + ".txt"));
 
             for (Long deckId : id) {
                 String deckName = getDeckName(context, deckId);
@@ -349,7 +349,7 @@ public class Utility {
         try
         {
             // create a new xls workbook file here
-            WritableWorkbook workbook = Workbook.createWorkbook(new File(fileName));
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(fileName + ".xls"));
 
             for(Long deckId : id){
                 String deckName = getDeckName(context,deckId);

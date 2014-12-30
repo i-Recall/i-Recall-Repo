@@ -72,6 +72,7 @@
     <!-- Backup Restore strings -->
     <string name="backup_whole_database">Backup Whole Database</string>
     <string name="restore_whole_database">Restore Whole Database</string>
+    <string name="dialog_backup_mode">Please choose your Backup mode</string>
 
 
 
