@@ -42,9 +42,24 @@ public class CardsContract {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
         }
 
+        // adrian: newly added
+        //public static Uri buildDeckWithCardTermSearchString(String searchString){
+        //    return CONTENT_URI.buildUpon().appendPath("search_term").appendPath(searchString).build();
+        //}
+
         public static String getNameFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
+        // adrian: newly added
+        /**
+         * Get the search string from Uri, Example, will get Business from the Uri content://com.example.nurhazim.i_recall/deck/search_term/Customer
+         * @param uri The Uri passed in from
+         * @return The search string
+         */
+        public static String getSearchStringFromUri(Uri uri){
+            return uri.getPathSegments().get(2);
+        }
+
         public static String getIdFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
@@ -53,6 +68,11 @@ public class CardsContract {
     public static final class CardEntry implements BaseColumns {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_CARD).build();
+
+        // adrian: newly added
+        public static Uri buildDeckWithCardTermSearchString(String searchString){
+            return CONTENT_URI.buildUpon().appendPath("search_term").appendPath(searchString).build();
+        }
 
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_CARD;

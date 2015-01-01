@@ -5,6 +5,8 @@
         <item>Collaborative Studying</item>
         <item>Backup</item>
         <item>User Performance</item>
+        <item>Search</item>
+        <item>Import/ Export</item>
     </string-array>
 
     <string-array name="months">
@@ -20,5 +22,10 @@
         <item>Oct</item>
         <item>Nov</item>
         <item>Dec</item>
+    </string-array>
+
+    <string-array name="export_mode_choice_array">
+        <item>txt Mode</item>
+        <item>xls Mode</item>
     </string-array>
 </resources>

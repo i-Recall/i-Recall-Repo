@@ -4,6 +4,8 @@
     package="com.example.nurhazim.i_recall" >
 
     <uses-sdk tools:node="replace"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +22,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".FileDialog" >
+        </activity>
+
+
         <provider
             android:name=".data.CardProvider"
             android:authorities="com.example.nurhazim.i_recall" />
@@ -32,6 +39,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.MainActivity" />
         </activity>
+
         <activity
             android:name=".EditDeckActivity"
             android:label="@string/title_activity_edit_deck"
@@ -40,6 +48,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.SingleDeckActivity" />
         </activity>
+
         <activity
             android:name=".StudyActivity"
             android:label="@string/title_activity_study"

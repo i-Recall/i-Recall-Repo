@@ -19,13 +19,37 @@
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary" />
 
-        <!-- sign-in button -->
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
             android:padding="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_weight="1">
+
+            <!-- sign-in button -->
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+            <Spinner
+                android:id="@+id/spinner_deck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/dropdownListPreferredItemHeight"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/button_start_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_start"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <!-- sign-out button -->
         <Button
@@ -37,20 +61,6 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <Spinner
-            android:id="@+id/spinner_deck"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/dropdownListPreferredItemHeight"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/button_start_game"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_start"
-            android:visibility="gone"/>
-
     </LinearLayout>
 
     <FrameLayout
@@ -61,6 +71,14 @@
         android:visibility="gone">
 
         <include layout="@layout/true_false_pager"/>
+
+            <ImageView
+                android:id="@+id/long_bar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:src="@drawable/long_bar"
+                android:layout_gravity="center|center"
+                android:visibility="invisible"/>
 
     </FrameLayout>
 

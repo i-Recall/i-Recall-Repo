@@ -33,6 +33,8 @@ public class MainActivity extends ActionBarActivity {
     private static final int NAV_COLLAB_STUDY = 1;
     private static final int NAV_BACKUP = 2;
     private static final int NAV_USER_PERFORMANCE = 3;
+    private static final int NAV_SEARCH = 4;
+    private static final int NAV_IMPORT = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +155,13 @@ public class MainActivity extends ActionBarActivity {
                 fragment = new GameOptionsFragment();
                 break;
             case NAV_BACKUP:
-                fragment = null;
+                fragment = new BackupFragment();
+                break;
+            case NAV_SEARCH:
+                fragment = new SearchFragment();
+                break;
+            case NAV_IMPORT:
+                fragment = new ImportExportFragment();
                 break;
             case NAV_USER_PERFORMANCE:
                 fragment = new UserPerformanceFragment();

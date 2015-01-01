@@ -14,11 +14,22 @@ import android.widget.TextView;
  * Created by NurHazim on 05-Nov-14.
  */
 public class SingleSideCardFragment extends Fragment {
+    private static final String GAME_TAG = "game";
     private String textTerm = "This is a term";
     private String textDescription = "This is a description";
 
     TextView cardTerm;
     TextView cardDescription;
+
+    public SingleSideCardFragment(){
+    }
+
+    public static SingleSideCardFragment newInstance(Bundle bundle){
+        SingleSideCardFragment newFragment = new SingleSideCardFragment();
+        newFragment.setArguments(bundle);
+
+        return newFragment;
+    }
 
     @Nullable
     @Override
@@ -33,7 +44,7 @@ public class SingleSideCardFragment extends Fragment {
             textDescription = bundle.getString(StudyActivity.DESCRIPTION_KEY);
         }
 
-        final CardView flashcard = (CardView) rootView.findViewById(R.id.flashcard);
+        CardView flashcard = (CardView) rootView.findViewById(R.id.flashcard);
         cardTerm = (TextView) flashcard.findViewById(R.id.flashcard_term);
         cardTerm.setText(textTerm);
 
@@ -41,5 +52,9 @@ public class SingleSideCardFragment extends Fragment {
         cardDescription.setText(textDescription);
 
         return rootView;
+    }
+
+    public TextView getCardDescription(){
+        return cardDescription;
     }
 }

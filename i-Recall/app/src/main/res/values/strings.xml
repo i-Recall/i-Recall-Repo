@@ -10,6 +10,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_online_game">Play online game</string>
 
+
     //dialog items
     <string name="dialog_hint_deck_name">New Deck Name</string>
     <string name="dialog_button_confirm">Add</string>
@@ -18,27 +19,33 @@
     <string name="dialog_button_save">Save</string>
     <string name="dialog_button_accept">Accept</string>
     <string name="dialog_button_decline">Decline</string>
-    <string name="dialog_new_invitation"> is inviting you to a new study session for </string>
+    <string name="dialog_new_invitation"> is inviting you to a new study session.</string>
     <string name="dialog_title_invitation">New Invitation</string>
+    <string name="dialog_message_disconnected">Somebody disconnected from the room</string>
+    <string name="dialog_error">Error</string>
+    <string name="dialog_button_ok">Okay</string>
+    <string name="dialog_message_winner">You\'re the winner!</string>
+    <string name="dialog_message_loser">You\'ve lost!</string>
+    <string name="dialog_title_game_end">Game End</string>
 
     //App bar titles
     <string name="title_decks">All Decks</string>
     <string name="title_activity_single_deck">SingleDeckActivity</string>
     <string name="title_activity_edit_deck">Edit Deck</string>
-
     //study methods
     <string name="study_flashcard">Flashcards</string>
     <string name="study_true_false">True / False</string>
     <string name="study_game">Game</string>
-
     //hints
     <string name="hint_deck_name">Deck Name</string>
     <string name="hint_card_term">Card Term</string>
     <string name="hint_card_description">Card Description</string>
-
     //others
     <string name="drawer_open">drawer_open</string>
     <string name="drawer_close">drawer_close</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
     <string name="title_activity_study">StudyActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="beginning_score">00</string>
@@ -52,5 +59,36 @@
     <string name="button_start">Start</string>
     <string name="button_refresh">Refresh</string>
     <string name="button_sign_out">Sign Out</string>
+
+    <!-- Search related strings -->
+    <string name="action_search_deck">Search Deck</string>
+    <string name="dialog_button_search">Search</string>
+    <string name="dialog_hint_search_string">Search Card</string>
+
+    <!-- Import and export related strings -->
+    <string name="title_import_export_decks">Import Export Deck</string>
+    <string name="location">Location</string>
+    <string name="cant_read_folder">folder can\'t be read!</string>
+    <string name="select">Select</string>
+    <string name="nnew">New</string>
+    <string name="file_name">File name:</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Save</string>
+    <string name="no_data">No Data</string>
+    <string name="dialog_export_mode">Please choose your export mode</string>
+
+    <!-- Import related strings -->
+    <string name="title_import_decks">Import Deck</string>
+    <string name="action_import_deck">Import Deck</string>
+
+    <!-- Export related strings -->
+    <string name="title_export_decks">Export Deck</string>
+    <string name="action_export_deck">Export Deck</string>
+
+    <!-- Backup Restore strings -->
+    <string name="backup_whole_database">Backup Whole Database</string>
+    <string name="restore_whole_database">Restore Whole Database</string>
+
+
 
 </resources>
