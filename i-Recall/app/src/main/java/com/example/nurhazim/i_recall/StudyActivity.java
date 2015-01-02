@@ -32,11 +32,13 @@ public class StudyActivity extends FragmentActivity{
     private static int mCurrentMode;
 
     private long startTime = 0L;
-    private long endTime = 0L;
     private long totalDuration = 0L;
+
+    private boolean userPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         startTime = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study);
@@ -76,6 +78,10 @@ public class StudyActivity extends FragmentActivity{
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString(SingleDeckFragment.DECK_NAME_KEY, mCurrentDeck);
+                if(intent.hasExtra(StudyGameFragment.USER_KEY)){
+                    bundle.putInt(StudyGameFragment.USER_KEY, intent.getIntExtra(StudyGameFragment.USER_KEY, -1));
+                    userPlaying = true;
+                }
                 newStudy.setArguments(bundle);
 
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -99,15 +105,34 @@ public class StudyActivity extends FragmentActivity{
 
     @Override
     protected void onDestroy() {
-        ContentValues newPerformance = new ContentValues();
-        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DATE, Utility.GetDate(this));
-        Log.v(LOG_TAG, "Date is " + Utility.GetDate(this));
-        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY, Utility.getDeckId(this, mCurrentDeck));
-        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD, mCurrentMode);
-        newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DURATION, totalDuration/1000);
-        Log.v(LOG_TAG, "Total duration is " + totalDuration/1000);
+        if(mCurrentMode == MODE_GAME){
+            if(userPlaying){
+                ContentValues newPerformance = new ContentValues();
+                newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DATE, Utility.GetDate(this));
+                Log.v(LOG_TAG, "Date is " + Utility.GetDate(this));
+                newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY, Utility.getDeckId(this, mCurrentDeck));
+                newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD, mCurrentMode);
+                newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DURATION, StudyGameFragment.GetTimeTakenForPlayer());
+                Log.v(LOG_TAG, "Total duration is " + StudyGameFragment.GetTimeTakenForPlayer());
+                Log.v(LOG_TAG, "User played.");
+                getContentResolver().insert(CardsContract.UserPerformanceEntry.CONTENT_URI, newPerformance);
+            }
+            else{
+                Log.v(LOG_TAG, "User didn't play.");
+            }
+        }
+        else{
+            ContentValues newPerformance = new ContentValues();
+            newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DATE, Utility.GetDate(this));
+            Log.v(LOG_TAG, "Date is " + Utility.GetDate(this));
+            newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DECK_KEY, Utility.getDeckId(this, mCurrentDeck));
+            newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_STUDY_METHOD, mCurrentMode);
+            newPerformance.put(CardsContract.UserPerformanceEntry.COLUMN_DURATION, totalDuration / 1000);
+            Log.v(LOG_TAG, "Total duration is " + totalDuration / 1000);
 
-        getContentResolver().insert(CardsContract.UserPerformanceEntry.CONTENT_URI, newPerformance);
+            getContentResolver().insert(CardsContract.UserPerformanceEntry.CONTENT_URI, newPerformance);
+        }
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onDestroy();
     }
 

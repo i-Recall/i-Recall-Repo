@@ -129,6 +129,7 @@ public class SignInActivity extends ActionBarActivity implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_in);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("New Game");
     }
 
     private void showInvitationDialog(final Invitation invitation){

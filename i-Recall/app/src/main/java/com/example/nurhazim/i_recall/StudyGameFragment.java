@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class StudyGameFragment extends Fragment {
     private static final String LOG_TAG = StudyGameFragment.class.getSimpleName();
+    public static final String USER_KEY = "user";
 
     private NoSwipeViewPager mPagerPlayer1;
     private NoSwipeViewPager mPagerPlayer2;
@@ -47,10 +48,15 @@ public class StudyGameFragment extends Fragment {
     private ImageView imgWinner;
     private ImageView imgTie;
 
+    private int userPlayer;
+    private long startTime = 0L;
+    private static long totalDuration = 0L;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.game_pager, container, false);
+        startTime = System.currentTimeMillis();
 
         imgWinner = (ImageView) rootView.findViewById(R.id.winner_image);
         imgTie = (ImageView) rootView.findViewById(R.id.tie_image);
@@ -66,6 +72,10 @@ public class StudyGameFragment extends Fragment {
                     null
             );
             mCursorAnswer = mCursorPlayer2 = mCursorPlayer1;
+            if(bundle.containsKey(USER_KEY) && bundle.getInt(USER_KEY) != -1){
+                userPlayer = bundle.getInt(USER_KEY);
+                Log.v("StudyGameFragment", "User is playing as Player " + userPlayer);
+            }
         }
 
         mPagerPlayer1 = (NoSwipeViewPager) rootView.findViewById(R.id.pager_player1);
@@ -93,6 +103,9 @@ public class StudyGameFragment extends Fragment {
                     buttonTruePlayer1.setVisibility(View.INVISIBLE);
                     buttonFalsePlayer1.setVisibility(View.INVISIBLE);
                     getWinner();
+                    if(userPlayer == 1){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
                 }
                 mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
             }
@@ -108,6 +121,9 @@ public class StudyGameFragment extends Fragment {
                     buttonTruePlayer1.setVisibility(View.INVISIBLE);
                     buttonFalsePlayer1.setVisibility(View.INVISIBLE);
                     getWinner();
+                    if(userPlayer == 1){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
                 }
                 mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
             }
@@ -123,6 +139,9 @@ public class StudyGameFragment extends Fragment {
                     buttonTruePlayer2.setVisibility(View.INVISIBLE);
                     buttonFalsePlayer2.setVisibility(View.INVISIBLE);
                     getWinner();
+                    if(userPlayer == 2){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
                 }
                 mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
             }
@@ -138,6 +157,9 @@ public class StudyGameFragment extends Fragment {
                     buttonTruePlayer2.setVisibility(View.INVISIBLE);
                     buttonFalsePlayer2.setVisibility(View.INVISIBLE);
                     getWinner();
+                    if(userPlayer == 2){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
                 }
                 mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
             }
@@ -245,6 +267,10 @@ public class StudyGameFragment extends Fragment {
                 Log.v(LOG_TAG, "It's a tie!");
             }
         }
+    }
+
+    public static long GetTimeTakenForPlayer(){
+        return totalDuration / 1000;
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

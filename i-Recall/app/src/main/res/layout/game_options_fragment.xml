@@ -6,14 +6,14 @@
     android:padding="16dp">
 
     <Spinner
-        android:id="@+id/spinner_player1"
+        android:id="@+id/spinner_player2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:minHeight="?attr/dropdownListPreferredItemHeight"/>
 
     <Spinner
-        android:id="@+id/spinner_player2"
+        android:id="@+id/spinner_player1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
