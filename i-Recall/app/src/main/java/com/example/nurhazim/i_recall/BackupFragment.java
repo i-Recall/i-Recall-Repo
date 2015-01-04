@@ -242,6 +242,7 @@ public class BackupFragment extends Fragment implements GoogleApiClient.Connecti
                 intent.putExtra(FileDialog.START_PATH, "/sdcard");
                 //can user select directories or not
                 intent.putExtra(FileDialog.CAN_SELECT_DIR, false);
+                intent.putExtra(FileDialog.SELECTION_MODE, SelectionMode.MODE_OPEN);
                 // launch file picker activity and wait for result to return
                 startActivityForResult(intent, PICK_RESTORE_FILE);
             }

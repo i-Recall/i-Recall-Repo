@@ -102,6 +102,7 @@ public class ImportExportFragment extends Fragment implements LoaderManager.Load
 
         //can user select directories or not
         intent.putExtra(FileDialog.CAN_SELECT_DIR, false);
+        intent.putExtra(FileDialog.SELECTION_MODE, SelectionMode.MODE_OPEN);
 
         startActivityForResult(intent, PICK_IMPORT_TEXT_FILE);
     }
