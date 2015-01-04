@@ -192,6 +192,7 @@ public class BackupFragment extends Fragment implements GoogleApiClient.Connecti
 
                                     //can user select directories or not
                                     intent.putExtra(FileDialog.CAN_SELECT_DIR, true);
+                                    intent.putExtra(FileDialog.SELECTION_MODE, SelectionMode.MODE_OPEN);
 
                                     startActivityForResult(intent, PICK_BACKUP_FILE);
                                 } else if (which == 1) // user choose the Google Drive backup mode
