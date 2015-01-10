@@ -9,6 +9,7 @@
     <string name="action_new_card">New Card</string>
     <string name="action_delete">Delete</string>
     <string name="action_online_game">Play online game</string>
+    <string name="action_refresh_deck_list">Refresh</string>
 
 
     //dialog items
@@ -29,6 +30,8 @@
     <string name="dialog_message_loser">You\'ve lost!</string>
     <string name="dialog_title_game_end">Game End</string>
     <string name="dialog_message_error_two_users">The user cannot be playing on both sides. Please choose another player to play with the user.</string>
+    <string name="connection_failed_title">Connection Error</string>
+    <string name="connection_failed_message">The app failed to connect to the server.</string>
 
     //App bar titles
     <string name="title_decks">All Decks</string>

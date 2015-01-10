@@ -18,6 +18,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -28,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -56,6 +59,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,6 +143,24 @@ public class SignInActivity extends ActionBarActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_in);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Game");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.sign_in_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_refresh_deck_list:
+                FetchDeckListTask fetchDeckListTask = new FetchDeckListTask(this);
+                fetchDeckListTask.execute();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showInvitationDialog(final Invitation invitation){
@@ -840,6 +862,7 @@ public class SignInActivity extends ActionBarActivity implements
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
+                urlConnection.setConnectTimeout(30000);
                 urlConnection.connect();
 
                 InputStream inputStream = urlConnection.getInputStream();
@@ -859,13 +882,24 @@ public class SignInActivity extends ActionBarActivity implements
                     return null;
                 }
                 decksJsonStr = buffer.toString();
-            } catch (IOException e) {
+            } catch(SocketTimeoutException e){
+                dialog.dismiss();
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(mContext, "Connection failed. Please retry", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                this.cancel(true);
+            }
+            catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 return null;
-            } finally {
+            } finally{
                 if (urlConnection != null) {
                     try {
-                        reader.close();
+                        if(reader != null){
+                            reader.close();
+                        }
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }

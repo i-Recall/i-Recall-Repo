@@ -60,7 +60,8 @@
         </activity>
         <activity android:name=".SignInActivity"
             android:label="New Game"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.MainActivity" />
