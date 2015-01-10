@@ -88,6 +88,8 @@ public class SingleDeckFragment extends Fragment implements LoaderManager.Loader
     public void onResume() {
         super.onResume();
         getLoaderManager().restartLoader(CARD_LOADER, null, this);
+        mCurrentDeckName = Utility.getDeckName(getActivity(), mCurrentDeckId);
+        getActivity().setTitle(mCurrentDeckName);
     }
 
     @Override

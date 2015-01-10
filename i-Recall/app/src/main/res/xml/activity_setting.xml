@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <EditTextPreference
+        android:key="pref_url"
+        android:title="Base URL"
+        android:defaultValue="http://192.168.0.106"
+        android:dialogTitle="New Base URL"/>
+
+</PreferenceScreen>

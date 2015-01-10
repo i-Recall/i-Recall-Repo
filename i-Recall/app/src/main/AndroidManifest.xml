@@ -58,11 +58,15 @@
                 android:value="com.example.nurhazim.i_recall.SingleDeckActivity" />
         </activity>
         <activity android:name=".SignInActivity"
-            android:label="SignInActivity"
+            android:label="New Game"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nurhazim.i_recall.MainActivity" />
+        </activity>
+        <activity android:name=".SettingsActivity"
+            android:label="Settings">
+
         </activity>
         <meta-data android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />

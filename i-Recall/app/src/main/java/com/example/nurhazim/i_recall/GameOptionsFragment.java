@@ -110,6 +110,20 @@ public class GameOptionsFragment extends Fragment {
 
             }
         });
+        spinnerPlayer2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == mPlayers.size()-1){
+                    NewPlayerDialogFragment dialog = new NewPlayerDialogFragment();
+                    dialog.show(getFragmentManager(), "New Player");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         spinnerDeck.setAdapter(spinnerDecksAdapter);
 
         Button buttonStart = (Button) rootView.findViewById(R.id.button_start_game);

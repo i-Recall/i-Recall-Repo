@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -590,7 +592,9 @@ public class SignInActivity extends ActionBarActivity implements
 
     @Override
     public void onPeerJoined(Room room, List<String> strings) {
-
+        FetchCardsTask fetchCardsTask = new FetchCardsTask(this);
+        fetchCardsTask.execute(mCurrentDeck);
+        mRoomId = room.getRoomId();
     }
 
     @Override
@@ -603,9 +607,6 @@ public class SignInActivity extends ActionBarActivity implements
 
     @Override
     public void onConnectedToRoom(Room room) {
-        FetchCardsTask fetchCardsTask = new FetchCardsTask(this);
-        fetchCardsTask.execute(mCurrentDeck);
-        mRoomId = room.getRoomId();
     }
 
     @Override
@@ -717,6 +718,8 @@ public class SignInActivity extends ActionBarActivity implements
 
                 findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
                 findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+                findViewById(R.id.spinner_deck).setVisibility(View.GONE);
+                findViewById(R.id.button_start_game).setVisibility(View.GONE);
         }
     }
 
@@ -799,17 +802,17 @@ public class SignInActivity extends ActionBarActivity implements
             String decksJsonStr = null;
 
             try {
-                final String DECK_BASE_URL = "192.168.0.106:1337/i_recall/index.php?";
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                String BASE_URL = sharedPreferences.getString(SettingsActivity.KEY_PREF_BASE_URL, "");
+                if(!BASE_URL.equals("")){
+                    BASE_URL = BASE_URL + ":1337";
+                }
                 final String DECK_PARAM = "deck";
 
-                Uri.Builder b = Uri.parse("http://192.168.0.106:1337").buildUpon();
+                Uri.Builder b = Uri.parse(BASE_URL).buildUpon();
                 b.path("/i_recall/index.php");
                 b.appendQueryParameter(DECK_PARAM, "*");
                 String urli = b.build().toString();
-
-                Uri builtUri = Uri.parse(DECK_BASE_URL).buildUpon()
-                        .appendQueryParameter(DECK_PARAM, "*")
-                        .build();
 
                 Log.v(LOG_TAG, "The Uri is " + urli);
 
@@ -880,9 +883,11 @@ public class SignInActivity extends ActionBarActivity implements
         private final String LOG_TAG = FetchDeckListTask.class.getSimpleName();
 
         private ProgressDialog dialog;
+        private Context mContext;
 
         public FetchCardsTask(Context context) {
             dialog = new ProgressDialog(context);
+            mContext = context;
         }
 
         @SuppressWarnings("unchecked")
@@ -930,9 +935,14 @@ public class SignInActivity extends ActionBarActivity implements
             String CardsJsonStr = null;
 
             try {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                String BASE_URL = sharedPreferences.getString(SettingsActivity.KEY_PREF_BASE_URL, "");
+                if(!BASE_URL.equals("")){
+                    BASE_URL = BASE_URL + ":1337";
+                }
                 final String DECK_PARAM = "deck";
 
-                Uri.Builder b = Uri.parse("http://192.168.0.106:1337").buildUpon();
+                Uri.Builder b = Uri.parse(BASE_URL).buildUpon();
                 b.path("/i_recall/index.php");
                 String queryParameter = mDeckList.get(params[0]);
                 b.appendQueryParameter(DECK_PARAM, queryParameter);
