@@ -95,7 +95,9 @@ public class GameOptionsFragment extends Fragment {
 
         spinnerPlayer1.setAdapter(mSpinnerPlayerAdapter);
         spinnerPlayer2.setAdapter(mSpinnerPlayerAdapter);
-        spinnerPlayer2.setSelection(1);
+        if(mPlayers.size() > 2) {
+            spinnerPlayer2.setSelection(1);
+        }
         spinnerPlayer1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

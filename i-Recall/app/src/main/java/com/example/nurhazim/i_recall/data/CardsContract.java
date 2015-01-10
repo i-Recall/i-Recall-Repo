@@ -42,10 +42,6 @@ public class CardsContract {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build();
         }
 
-        // adrian: newly added
-        //public static Uri buildDeckWithCardTermSearchString(String searchString){
-        //    return CONTENT_URI.buildUpon().appendPath("search_term").appendPath(searchString).build();
-        //}
 
         public static String getNameFromUri(Uri uri){
             return uri.getPathSegments().get(1);

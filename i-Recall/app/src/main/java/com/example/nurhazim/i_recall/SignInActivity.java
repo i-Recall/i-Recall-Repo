@@ -593,7 +593,7 @@ public class SignInActivity extends ActionBarActivity implements
     @Override
     public void onPeerJoined(Room room, List<String> strings) {
         FetchCardsTask fetchCardsTask = new FetchCardsTask(this);
-        fetchCardsTask.execute(mCurrentDeck);
+        fetchCardsTask.execute(mSpinnerDeck.getSelectedItemPosition());
         mRoomId = room.getRoomId();
     }
 

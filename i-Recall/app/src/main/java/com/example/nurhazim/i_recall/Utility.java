@@ -341,7 +341,7 @@ public class Utility {
 
         try {
 
-            BufferedWriter br = new BufferedWriter(new FileWriter(fileName));
+            BufferedWriter br = new BufferedWriter(new FileWriter(fileName + ".txt"));
 
             for (Long deckId : id) {
                 String deckName = getDeckName(context, deckId);
@@ -394,7 +394,7 @@ public class Utility {
         try
         {
             // create a new xls workbook file here
-            WritableWorkbook workbook = Workbook.createWorkbook(new File(fileName));
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(fileName + ".xls"));
 
             for(Long deckId : id){
                 String deckName = getDeckName(context,deckId);
@@ -452,8 +452,8 @@ public class Utility {
     public static String getNowDateTimeStringNoSymbols()
     {
         String result = getNowDateTimeString();
-        result = result.replace("-", "");
-        result = result.replace(" ", "");
+        result = result.replace("-", ".");
+        result = result.replace(" ", " ");
         result = result.replace(":", "");
 
         return result;
@@ -477,7 +477,7 @@ public class Utility {
                 // our current database file path
                 String currentDBPath = "//data//com.example.nurhazim.i_recall//databases//" + CardsDbHelper.DATABASE_NAME;
                 //String backupDBPath = CardsDbHelper.DATABASE_NAME + "_" + getNowDateTimeStringNoSymbols() + ".sql";
-                String backupDBPath = "cards_" + getNowDateTimeStringNoSymbols() + ".db";
+                String backupDBPath = "iRe.Backup_" + getNowDateTimeStringNoSymbols() + ".db";
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(fullPathOfDirectory, backupDBPath);
 

@@ -147,6 +147,7 @@ public class FileDialog extends ListActivity {
 
         if (selectionMode == SelectionMode.MODE_OPEN) {
             newButton.setEnabled(false);
+            newButton.setVisibility(View.GONE);
         }
 
         layoutSelect = (LinearLayout) findViewById(R.id.fdLinearLayoutSelect);

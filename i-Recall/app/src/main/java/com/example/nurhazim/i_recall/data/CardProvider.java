@@ -288,7 +288,7 @@ public class CardProvider extends ContentProvider {
                 return CardsContract.DeckEntry.CONTENT_ITEM_TYPE;
             case DECK:
                 return CardsContract.DeckEntry.CONTENT_TYPE;
-            // wsc: newly added
+            // adrian: newly added
             case CARD_WITH_SEARCH_STRING:
                 return CardsContract.CardEntry.CONTENT_TYPE;
             case CARD_WITH_DECK_ID:

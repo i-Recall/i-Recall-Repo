@@ -33,4 +33,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile project(':hellocharts-library')
     compile project(':BaseGameUtils')
+    compile files('libs/jxl.jar')
 }
