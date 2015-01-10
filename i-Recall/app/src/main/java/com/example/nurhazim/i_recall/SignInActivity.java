@@ -261,6 +261,7 @@ public class SignInActivity extends ActionBarActivity implements
             if(autoMatchCriteria != null){
                 roomConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
             }
+            mCurrentDeck = mSpinnerDeck.getSelectedItemPosition();
             roomConfigBuilder.setVariant(mSpinnerDeck.getSelectedItemPosition()+1);
             RoomConfig roomConfig = roomConfigBuilder.build();
             Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfig);
@@ -605,7 +606,7 @@ public class SignInActivity extends ActionBarActivity implements
     @Override
     public void onPeerJoined(Room room, List<String> strings) {
         FetchCardsTask fetchCardsTask = new FetchCardsTask(this);
-        fetchCardsTask.execute(mSpinnerDeck.getSelectedItemPosition());
+        fetchCardsTask.execute(mCurrentDeck);
         mRoomId = room.getRoomId();
     }
 
