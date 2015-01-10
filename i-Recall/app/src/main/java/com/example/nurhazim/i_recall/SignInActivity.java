@@ -129,6 +129,13 @@ public class SignInActivity extends ActionBarActivity implements
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Games.API)
+                .addScope(Games.SCOPE_GAMES)
+                .build();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_in);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Game");
@@ -165,22 +172,17 @@ public class SignInActivity extends ActionBarActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Games.API)
-                .addScope(Games.SCOPE_GAMES)
-                .build();
         if(!mInSignInFlow && !mExplicitSignOut){
             Log.v(LOG_TAG, "Connecting to Play Games");
             mSignInClicked = true;
-            mInSignInFlow = true;
+//            mInSignInFlow = true;
             mGoogleApiClient.connect();
         }
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.v(LOG_TAG, "Connected");
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         findViewById(R.id.spinner_deck).setVisibility(View.VISIBLE);
@@ -288,6 +290,16 @@ public class SignInActivity extends ActionBarActivity implements
         else if(requestCode == GamesActivityResultCodes.RESULT_LEFT_ROOM){
             Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        else if(requestCode == RC_SIGN_IN){
+            mSignInClicked = false;
+            mResolvingConnectionFailure = false;
+            if (resultCode == RESULT_OK) {
+                mGoogleApiClient.connect();
+            } else {
+                BaseGameUtils.showActivityResultError(this, requestCode, resultCode,
+                        R.string.signin_error);
+            }
         }
     }
 
@@ -697,7 +709,7 @@ public class SignInActivity extends ActionBarActivity implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -739,7 +751,12 @@ public class SignInActivity extends ActionBarActivity implements
                     RC_SIGN_IN, getResources().getString(R.string.sign_in_failed))){
                 mResolvingConnectionFailure = false;
             }
+            Log.e(LOG_TAG, "There was a problem with signing in.");
         }
+        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+        findViewById(R.id.spinner_deck).setVisibility(View.GONE);
+        findViewById(R.id.button_start_game).setVisibility(View.GONE);
     }
 
     boolean shouldStartGame(Room room){

@@ -46,6 +46,8 @@
     <string name="drawer_open">drawer_open</string>
     <string name="drawer_close">drawer_close</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="signin_error">Sign in Failure</string>
+    <string name="signin_other_error">Unknown Error</string>
 
 
     <string name="title_activity_study">StudyActivity</string>
