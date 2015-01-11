@@ -78,9 +78,10 @@ public class SignInActivity extends ActionBarActivity implements
         RoomStatusUpdateListener,
         RealTimeMessageReceivedListener{
     private static int RC_SIGN_IN = 9001;
-    final static int RC_SELECT_PLAYERS = 10000;
-    final static int RC_WAITING_ROOM = 10002;
+    private final static int RC_SELECT_PLAYERS = 10000;
+    private final static int RC_WAITING_ROOM = 10002;
     private final static int REQUEST_LEADERBOARD = 9003;
+    private final static int RC_INVITATION_INBOX = 10001;
 
     private final static String LEADERBOARD_ID = "CgkI2p-P95YNEAIQAQ";
 
@@ -155,9 +156,15 @@ public class SignInActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_refresh_deck_list:
-                FetchDeckListTask fetchDeckListTask = new FetchDeckListTask(this);
-                fetchDeckListTask.execute();
-                return true;
+                if(mGoogleApiClient.isConnected()) {
+                    FetchDeckListTask fetchDeckListTask = new FetchDeckListTask(this);
+                    fetchDeckListTask.execute();
+                    return true;
+                }
+                else{
+                    Toast.makeText(this, "Please sign in first", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -185,7 +192,7 @@ public class SignInActivity extends ActionBarActivity implements
                         .setNegativeButton(R.string.dialog_button_decline, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        Games.RealTimeMultiplayer.declineInvitation(mGoogleApiClient, invitation.getInvitationId());
                     }
                 })
                 .create().show();
@@ -227,6 +234,7 @@ public class SignInActivity extends ActionBarActivity implements
         mInvitationListener = new OnInvitationReceivedListener() {
             @Override
             public void onInvitationReceived(Invitation invitation) {
+                finishActivity(RC_SELECT_PLAYERS);
                 showInvitationDialog(invitation);
             }
 
@@ -289,6 +297,11 @@ public class SignInActivity extends ActionBarActivity implements
             Games.RealTimeMultiplayer.create(mGoogleApiClient, roomConfig);
 
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage("Preparing waiting lobby");
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
         }
         else if(requestCode == RC_WAITING_ROOM){
             if(resultCode == Activity.RESULT_OK){
@@ -302,16 +315,16 @@ public class SignInActivity extends ActionBarActivity implements
                 InitializeGame();
             }
             else if(resultCode == Activity. RESULT_CANCELED){
-                Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
+                Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
             else if(resultCode == GamesActivityResultCodes.RESULT_LEFT_ROOM){
-                Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
+                Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
         }
         else if(requestCode == GamesActivityResultCodes.RESULT_LEFT_ROOM){
-            Games.RealTimeMultiplayer.leave(mGoogleApiClient, null, mRoomId);
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         else if(requestCode == RC_SIGN_IN){
@@ -415,7 +428,24 @@ public class SignInActivity extends ActionBarActivity implements
         }
     }
 
+    public void QuitGame(){
+        Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mGameLayout.setVisibility(View.GONE);
+        mSignInLayout.setVisibility(View.VISIBLE);
+        Games.Leaderboards.submitScore(mGoogleApiClient, LEADERBOARD_ID, mPlayerScore);
+        ResetGame();
+    }
+
     private void InitializeGame(){
+        findViewById(R.id.button_quit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QuitGame();
+            }
+        });
+        mPlaying = true;
+
         mAttackingBar = (ImageView) findViewById(R.id.long_bar);
 
         mPager = (NoSwipeViewPager) findViewById(R.id.pager);
@@ -638,6 +668,21 @@ public class SignInActivity extends ActionBarActivity implements
             Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        else{
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//            builder.setMessage(getResources().getString(R.string.dialog_message_disconnected))
+//                    .setTitle(R.string.dialog_error)
+//                    .setNeutralButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                        }
+//                    })
+//                    .create().show();
+        }
     }
 
     @Override
@@ -646,7 +691,21 @@ public class SignInActivity extends ActionBarActivity implements
 
     @Override
     public void onDisconnectedFromRoom(Room room) {
-        if(!mFinished) {
+        Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    @Override
+    public void onPeersConnected(Room room, List<String> strings) {
+        if(shouldStartGame(room)){
+            //TO-DO: start game
+            Log.v(LOG_TAG, "Peers connected!");
+        }
+    }
+
+    @Override
+    public void onPeersDisconnected(Room room, List<String> strings) {
+        if(mPlaying && !mFinished){
             Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -660,21 +719,7 @@ public class SignInActivity extends ActionBarActivity implements
                         }
                     })
                     .create().show();
-        }
-    }
-
-    @Override
-    public void onPeersConnected(Room room, List<String> strings) {
-        if(shouldStartGame(room)){
-            //TO-DO: start game
-            Log.v(LOG_TAG, "Peers connected!");
-        }
-    }
-
-    @Override
-    public void onPeersDisconnected(Room room, List<String> strings) {
-        if(mPlaying){
-            //TO-DO: stop game
+            QuitGame();
         }
     }
 
@@ -700,6 +745,7 @@ public class SignInActivity extends ActionBarActivity implements
             mRoomId = room.getRoomId();
             Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, Integer.MAX_VALUE);
             startActivityForResult(intent, RC_WAITING_ROOM);
+            if(mProgressDialog.isShowing())mProgressDialog.dismiss();
         }
     }
 
@@ -713,6 +759,7 @@ public class SignInActivity extends ActionBarActivity implements
         }
         Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, Integer.MAX_VALUE);
         startActivityForResult(intent, RC_WAITING_ROOM);
+        if(mProgressDialog.isShowing())mProgressDialog.dismiss();
     }
 
     @Override

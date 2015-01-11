@@ -65,20 +65,27 @@
 
     <FrameLayout
         android:id="@+id/game_layout"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <include layout="@layout/true_false_pager"/>
 
-            <ImageView
-                android:id="@+id/long_bar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:src="@drawable/long_bar"
-                android:layout_gravity="center|center"
-                android:visibility="invisible"/>
+        <ImageView
+            android:id="@+id/long_bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:src="@drawable/long_bar"
+            android:layout_gravity="center|center"
+            android:visibility="invisible"/>
+
+        <ImageButton
+            android:id="@+id/button_quit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:src="@drawable/ic_cancel"
+            android:background="@null"/>
 
     </FrameLayout>
 
