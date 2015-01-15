@@ -1,38 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="vertical">
-
-    <com.example.nurhazim.i_recall.NoSwipeViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    </com.example.nurhazim.i_recall.NoSwipeViewPager>
+    android:layout_width="match_parent">
 
     <LinearLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_false"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/button_false"/>
+        <com.example.nurhazim.i_recall.NoSwipeViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <Button
-            android:id="@+id/button_true"
-            android:layout_width="0dp"
+        </com.example.nurhazim.i_recall.NoSwipeViewPager>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/button_true"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_false"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_false"/>
+
+            <Button
+                android:id="@+id/button_true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_true"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/image_evaluation"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="-30dp"
+        android:background="@null"
+        android:layout_gravity="center|center"/>
+
+</FrameLayout>

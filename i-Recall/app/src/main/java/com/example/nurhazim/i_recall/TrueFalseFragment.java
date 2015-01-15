@@ -11,7 +11,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.nurhazim.i_recall.data.CardsContract;
 
@@ -31,6 +34,8 @@ public class TrueFalseFragment extends Fragment {
     private PagerAdapter mPagerAdapter;
 
     private Cursor mCursorAnswer;
+
+    private ImageView mImageEvaluation;
 
     public TrueFalseFragment(){
     }
@@ -56,17 +61,19 @@ public class TrueFalseFragment extends Fragment {
         mPagerAdapter = new ScreenSlidePagerAdapter(((FragmentActivity)getActivity()).getSupportFragmentManager(), mCursor);
         mPager.setAdapter(mPagerAdapter);
 
+        mImageEvaluation = (ImageView) rootView.findViewById(R.id.image_evaluation);
+
         Button btnTrue = (Button) rootView.findViewById(R.id.button_true);
         Button btnFalse = (Button) rootView.findViewById(R.id.button_false);
 
         btnTrue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isAtLastItem(mPager)){
-                    getActivity().finish();
+                if(((ScreenSlidePagerAdapter)mPagerAdapter).getAnswer(mPager.getCurrentItem()) == true){
+                    showEvaluation(true);
                 }
                 else {
-                    mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+                    showEvaluation(false);
                 }
             }
         });
@@ -74,6 +81,35 @@ public class TrueFalseFragment extends Fragment {
         btnFalse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(((ScreenSlidePagerAdapter)mPagerAdapter).getAnswer(mPager.getCurrentItem()) == false){
+                    showEvaluation(true);
+                }
+                else{
+                    showEvaluation(false);
+                }
+            }
+        });
+
+        return rootView;
+    }
+
+    private void showEvaluation(boolean evaluation){
+
+        if(evaluation){
+            mImageEvaluation.setImageResource(R.drawable.correct);
+        }
+        else{
+            mImageEvaluation.setImageResource(R.drawable.wrong);
+        }
+        Animation evaluationAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.evaluation_fade_in_out);
+        evaluationAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
                 if(isAtLastItem(mPager)){
                     getActivity().finish();
                 }
@@ -81,9 +117,14 @@ public class TrueFalseFragment extends Fragment {
                     mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                 }
             }
-        });
 
-        return rootView;
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mImageEvaluation.setVisibility(View.VISIBLE);
+        mImageEvaluation.startAnimation(evaluationAnim);
     }
 
     private boolean isAtLastItem(ViewPager viewPager){

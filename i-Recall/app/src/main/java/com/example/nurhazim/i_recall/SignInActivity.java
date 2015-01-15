@@ -349,7 +349,7 @@ public class SignInActivity extends ActionBarActivity implements
         );
         mShot = true;
         Log.v(LOG_TAG, "Attack the other player");
-        Animation exit = AnimationUtils.loadAnimation(this, R.anim.ball_exit);
+        Animation exit = AnimationUtils.loadAnimation(this, R.anim.bar_exit);
         exit.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -575,7 +575,7 @@ public class SignInActivity extends ActionBarActivity implements
                 case STRING_SHOOT:
                     Log.v(LOG_TAG, "I'm under attack!");
                     mAttackingBar.setVisibility(View.VISIBLE);
-                    mAttackingBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.ball_attack));
+                    mAttackingBar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.bar_attack));
                     break;
                 case STRING_FINISHED:
                     Log.v(LOG_TAG, "Opponent is finished");
