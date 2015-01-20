@@ -891,13 +891,10 @@ public class SignInActivity extends ActionBarActivity implements
             try {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                 String BASE_URL = sharedPreferences.getString(SettingsActivity.KEY_PREF_BASE_URL, "");
-                if(!BASE_URL.equals("")){
-                    BASE_URL = BASE_URL + ":1337";
-                }
                 final String DECK_PARAM = "deck";
 
                 Uri.Builder b = Uri.parse(BASE_URL).buildUpon();
-                b.path("/i_recall/index.php");
+                b.path("/api/index.php");
                 b.appendQueryParameter(DECK_PARAM, "*");
                 String urli = b.build().toString();
 
@@ -1036,13 +1033,10 @@ public class SignInActivity extends ActionBarActivity implements
             try {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                 String BASE_URL = sharedPreferences.getString(SettingsActivity.KEY_PREF_BASE_URL, "");
-                if(!BASE_URL.equals("")){
-                    BASE_URL = BASE_URL + ":1337";
-                }
                 final String DECK_PARAM = "deck";
 
                 Uri.Builder b = Uri.parse(BASE_URL).buildUpon();
-                b.path("/i_recall/index.php");
+                b.path("/api/index.php");
                 String queryParameter = mDeckList.get(params[0]);
                 b.appendQueryParameter(DECK_PARAM, queryParameter);
                 String builtUri = b.build().toString();
