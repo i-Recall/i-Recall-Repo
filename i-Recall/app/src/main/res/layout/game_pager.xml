@@ -106,4 +106,23 @@
         android:background="@null"
         android:visibility="gone"/>
 
+    <ImageView
+        android:id="@+id/image_evaluation_player1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@null"
+        android:layout_marginTop="200dp"
+        android:layout_gravity="center|center"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/image_evaluation_player2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:rotation="180"
+        android:background="@null"
+        android:layout_marginBottom="200dp"
+        android:layout_gravity="center|center"
+        android:visibility="gone"/>
+
 </FrameLayout>

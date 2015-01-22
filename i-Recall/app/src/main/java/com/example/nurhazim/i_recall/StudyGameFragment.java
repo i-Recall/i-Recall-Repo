@@ -52,6 +52,14 @@ public class StudyGameFragment extends Fragment {
     private long startTime = 0L;
     private static long totalDuration = 0L;
 
+    private ImageView mImgEvalPlayer1;
+    private ImageView mImgEvalPlayer2;
+
+    private Button mButtonTruePlayer1;
+    private Button mButtonFalsePlayer1;
+    private Button mButtonTruePlayer2;
+    private Button mButtonFalsePlayer2;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +68,9 @@ public class StudyGameFragment extends Fragment {
 
         imgWinner = (ImageView) rootView.findViewById(R.id.winner_image);
         imgTie = (ImageView) rootView.findViewById(R.id.tie_image);
+
+        mImgEvalPlayer1 = (ImageView) rootView.findViewById(R.id.image_evaluation_player1);
+        mImgEvalPlayer2 = (ImageView) rootView.findViewById(R.id.image_evaluation_player2);
 
         Bundle bundle = getArguments();
         if(bundle != null){
@@ -88,84 +99,193 @@ public class StudyGameFragment extends Fragment {
         scorePlayer1 = (TextView) rootView.findViewById(R.id.player1_score_text);
         scorePlayer2 = (TextView) rootView.findViewById(R.id.player2_score_text);
 
-        final Button buttonTruePlayer1 = (Button) rootView.findViewById(R.id.button_player1_true);
-        final Button buttonFalsePlayer1 = (Button) rootView.findViewById(R.id.button_player1_false);
-        final Button buttonTruePlayer2 = (Button) rootView.findViewById(R.id.button_player2_true);
-        final Button buttonFalsePlayer2 = (Button) rootView.findViewById(R.id.button_player2_false);
+        mButtonTruePlayer1 = (Button) rootView.findViewById(R.id.button_player1_true);
+        mButtonFalsePlayer1 = (Button) rootView.findViewById(R.id.button_player1_false);
+        mButtonTruePlayer2 = (Button) rootView.findViewById(R.id.button_player2_true);
+        mButtonFalsePlayer2 = (Button) rootView.findViewById(R.id.button_player2_false);
 
-        buttonTruePlayer1.setOnClickListener(new View.OnClickListener() {
+        mButtonTruePlayer1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPagerAdapterPlayer1.getAnswer(mPagerPlayer1.getCurrentItem())){
-                    increaseScore(scorePlayer1);
+//                if(mPagerAdapterPlayer1.getAnswer(mPagerPlayer1.getCurrentItem())){
+//                    increaseScore(scorePlayer1);
+//                }
+//                if(isAtLastItem(mPagerPlayer1)){
+//                    buttonTruePlayer1.setVisibility(View.INVISIBLE);
+//                    buttonFalsePlayer1.setVisibility(View.INVISIBLE);
+//                    getWinner();
+//                    if(userPlayer == 1){
+//                        totalDuration += (System.currentTimeMillis() - startTime);
+//                    }
+//                }
+//                mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
+
+                if(((ScreenSlidePagerAdapter)mPagerAdapterPlayer1).getAnswer(mPagerPlayer1.getCurrentItem()) == true){
+                    showEvaluationPlayer1(true);
                 }
-                if(isAtLastItem(mPagerPlayer1)){
-                    buttonTruePlayer1.setVisibility(View.INVISIBLE);
-                    buttonFalsePlayer1.setVisibility(View.INVISIBLE);
-                    getWinner();
-                    if(userPlayer == 1){
-                        totalDuration += (System.currentTimeMillis() - startTime);
-                    }
+                else {
+                    showEvaluationPlayer1(false);
                 }
-                mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
             }
         });
 
-        buttonFalsePlayer1.setOnClickListener(new View.OnClickListener() {
+        mButtonFalsePlayer1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mPagerAdapterPlayer1.getAnswer(mPagerPlayer1.getCurrentItem())){
-                    increaseScore(scorePlayer1);
+//                if(!mPagerAdapterPlayer1.getAnswer(mPagerPlayer1.getCurrentItem())){
+//                    increaseScore(scorePlayer1);
+//                }
+//                if(isAtLastItem(mPagerPlayer1)){
+//                    buttonTruePlayer1.setVisibility(View.INVISIBLE);
+//                    buttonFalsePlayer1.setVisibility(View.INVISIBLE);
+//                    getWinner();
+//                    if(userPlayer == 1){
+//                        totalDuration += (System.currentTimeMillis() - startTime);
+//                    }
+//                }
+//                mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
+                if(((ScreenSlidePagerAdapter)mPagerAdapterPlayer1).getAnswer(mPagerPlayer1.getCurrentItem()) == false){
+                    showEvaluationPlayer1(true);
                 }
-                if(isAtLastItem(mPagerPlayer1)){
-                    buttonTruePlayer1.setVisibility(View.INVISIBLE);
-                    buttonFalsePlayer1.setVisibility(View.INVISIBLE);
-                    getWinner();
-                    if(userPlayer == 1){
-                        totalDuration += (System.currentTimeMillis() - startTime);
-                    }
+                else {
+                    showEvaluationPlayer1(false);
                 }
-                mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
             }
         });
 
-        buttonTruePlayer2.setOnClickListener(new View.OnClickListener() {
+        mButtonTruePlayer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPagerAdapterPlayer2.getAnswer(mPagerPlayer2.getCurrentItem())){
-                    increaseScore(scorePlayer2);
+//                if(mPagerAdapterPlayer2.getAnswer(mPagerPlayer2.getCurrentItem())){
+//                    increaseScore(scorePlayer2);
+//                }
+//                if(isAtLastItem(mPagerPlayer2)){
+//                    buttonTruePlayer2.setVisibility(View.INVISIBLE);
+//                    buttonFalsePlayer2.setVisibility(View.INVISIBLE);
+//                    getWinner();
+//                    if(userPlayer == 2){
+//                        totalDuration += (System.currentTimeMillis() - startTime);
+//                    }
+//                }
+//                mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
+                if(((ScreenSlidePagerAdapter)mPagerAdapterPlayer2).getAnswer(mPagerPlayer2.getCurrentItem()) == true){
+                    showEvaluationPlayer2(true);
                 }
-                if(isAtLastItem(mPagerPlayer2)){
-                    buttonTruePlayer2.setVisibility(View.INVISIBLE);
-                    buttonFalsePlayer2.setVisibility(View.INVISIBLE);
-                    getWinner();
-                    if(userPlayer == 2){
-                        totalDuration += (System.currentTimeMillis() - startTime);
-                    }
+                else {
+                    showEvaluationPlayer2(false);
                 }
-                mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
             }
         });
 
-        buttonFalsePlayer2.setOnClickListener(new View.OnClickListener() {
+        mButtonFalsePlayer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mPagerAdapterPlayer2.getAnswer(mPagerPlayer2.getCurrentItem())){
-                    increaseScore(scorePlayer2);
+//                if(!mPagerAdapterPlayer2.getAnswer(mPagerPlayer2.getCurrentItem())){
+//                    increaseScore(scorePlayer2);
+//                }
+//                if(isAtLastItem(mPagerPlayer2)){
+//                    buttonTruePlayer2.setVisibility(View.INVISIBLE);
+//                    buttonFalsePlayer2.setVisibility(View.INVISIBLE);
+//                    getWinner();
+//                    if(userPlayer == 2){
+//                        totalDuration += (System.currentTimeMillis() - startTime);
+//                    }
+//                }
+//                mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
+                if(((ScreenSlidePagerAdapter)mPagerAdapterPlayer2).getAnswer(mPagerPlayer2.getCurrentItem()) == false){
+                    showEvaluationPlayer2(true);
                 }
-                if(isAtLastItem(mPagerPlayer2)){
-                    buttonTruePlayer2.setVisibility(View.INVISIBLE);
-                    buttonFalsePlayer2.setVisibility(View.INVISIBLE);
-                    getWinner();
-                    if(userPlayer == 2){
-                        totalDuration += (System.currentTimeMillis() - startTime);
-                    }
+                else {
+                    showEvaluationPlayer2(false);
                 }
-                mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
             }
         });
 
         return rootView;
+    }
+
+    private void showEvaluationPlayer1(boolean evaluation){
+        mButtonTruePlayer1.setVisibility(View.INVISIBLE);
+        mButtonFalsePlayer1.setVisibility(View.INVISIBLE);
+
+        if(evaluation){
+            mImgEvalPlayer1.setImageResource(R.drawable.correct);
+            increaseScore(scorePlayer1);
+        }
+        else{
+            mImgEvalPlayer1.setImageResource(R.drawable.wrong);
+        }
+        Animation evaluationAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.evaluation_fade_in_out);
+        evaluationAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(isAtLastItem(mPagerPlayer1)){
+                    getWinner();
+                    if(userPlayer == 1){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
+                }
+                else {
+                    mPagerPlayer1.setCurrentItem(mPagerPlayer1.getCurrentItem() + 1);
+                    mButtonTruePlayer1.setVisibility(View.VISIBLE);
+                    mButtonFalsePlayer1.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mImgEvalPlayer1.setVisibility(View.VISIBLE);
+        mImgEvalPlayer1.startAnimation(evaluationAnim);
+    }
+
+    private void showEvaluationPlayer2(boolean evaluation){
+        mButtonTruePlayer2.setVisibility(View.INVISIBLE);
+        mButtonFalsePlayer2.setVisibility(View.INVISIBLE);
+
+        if(evaluation){
+            mImgEvalPlayer2.setImageResource(R.drawable.correct);
+            increaseScore(scorePlayer2);
+        }
+        else{
+            mImgEvalPlayer2.setImageResource(R.drawable.wrong);
+        }
+        Animation evaluationAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.evaluation_fade_in_out);
+        evaluationAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(isAtLastItem(mPagerPlayer2)){
+                    getWinner();
+                    if(userPlayer == 2){
+                        totalDuration += (System.currentTimeMillis() - startTime);
+                    }
+                }
+                else {
+                    mPagerPlayer2.setCurrentItem(mPagerPlayer2.getCurrentItem() + 1);
+                    mButtonTruePlayer2.setVisibility(View.VISIBLE);
+                    mButtonFalsePlayer2.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mImgEvalPlayer2.setVisibility(View.VISIBLE);
+        mImgEvalPlayer2.startAnimation(evaluationAnim);
     }
 
     private void increaseScore(TextView score){
@@ -184,6 +304,8 @@ public class StudyGameFragment extends Fragment {
 
     private void getWinner(){
         if(isAtLastItem(mPagerPlayer1) && isAtLastItem(mPagerPlayer2)){
+            mImgEvalPlayer1.setVisibility(View.GONE);
+            mImgEvalPlayer2.setVisibility(View.GONE);
             if(Integer.valueOf(scorePlayer1.getText().toString()) > Integer.valueOf(scorePlayer2.getText().toString())){
                 imgWinner.setVisibility(View.VISIBLE);
                 Animation announceWinner = AnimationUtils.loadAnimation(getActivity(), R.anim.winner_animation);
