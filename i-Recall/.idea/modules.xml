@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" filepath="$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hellocharts-library/hellocharts-library.iml" filepath="$PROJECT_DIR$/hellocharts-library/hellocharts-library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hellocharts-samples/hellocharts-samples.iml" filepath="$PROJECT_DIR$/hellocharts-samples/hellocharts-samples.iml" />
       <module fileurl="file://$PROJECT_DIR$/i-Recall.iml" filepath="$PROJECT_DIR$/i-Recall.iml" />
     </modules>
   </component>

@@ -1,1 +1,1 @@
-include ':app', ':hellocharts-library', ':hellocharts-samples', ':BaseGameUtils'
+include ':app', ':hellocharts-library', ':BaseGameUtils'
