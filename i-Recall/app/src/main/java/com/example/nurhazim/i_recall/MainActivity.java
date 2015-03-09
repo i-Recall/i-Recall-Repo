@@ -1,117 +1,78 @@
 package com.example.nurhazim.i_recall;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.provider.ContactsContract;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+
+import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
+import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
+import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends MaterialNavigationDrawer {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    private String[] mNavItems;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
     private CharSequence mTitle;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private LinearLayout mLinearLayout;
-    private CharSequence mDrawerTitle;
-
-    private static final int NAV_ALL_DECKS = 0;
-    private static final int NAV_COLLAB_STUDY = 1;
-    private static final int NAV_BACKUP = 2;
-    private static final int NAV_USER_PERFORMANCE = 3;
-    private static final int NAV_SEARCH = 4;
-    private static final int NAV_IMPORT = 5;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.nav_drawer_activity);
-
+    public void init(Bundle bundle) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mNavItems = getResources().getStringArray(R.array.nav_drawer_items);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mLinearLayout = (LinearLayout) findViewById(R.id.linear_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                toolbar,
-                R.string.drawer_open,
-                R.string.drawer_close
-        ){
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); //creates call to onPrepareOptionsMenu()
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerList.setAdapter(new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                mNavItems
-        ));
+        mTitle = getTitle();
 
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        mTitle = mDrawerTitle = getTitle();
+        MaterialSection allDecks = newSection("All Decks", new DecksFragment());
+        MaterialSection collaborativeStudying = newSection("Collaborative Studying", new GameOptionsFragment());
+        MaterialSection backup = newSection("Backup", new BackupFragment());
+        MaterialSection userPerformance = newSection("User Performance", new UserPerformanceFragment());
+        MaterialSection search = newSection("Search", new SearchFragment());
+        MaterialSection import_export = newSection("Import / Export", new ImportExportFragment());
+        MaterialSection settings = newSection("Settings", new Intent(this, SettingsActivity.class));
 
-        mDrawerLayout.setStatusBarBackgroundColor(R.attr.colorPrimary);
+        addSection(allDecks);
+        addSection(collaborativeStudying);
+        addSection(backup);
+        addSection(userPerformance);
+        addSection(search);
+        addSection(import_export);
+        addBottomSection(settings);
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.content_frame, new DecksFragment())
-                    .commit();
+        allowArrowAnimation();
+
+        MaterialAccount account = new MaterialAccount(this.getResources(), getName(), "", R.drawable.default_profile, R.drawable.default_cover);
+        addAccount(account);
+    }
+
+    private String getName(){
+        Cursor cursor = getContentResolver().query(
+                ContactsContract.Profile.CONTENT_URI,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        int count = cursor.getCount();
+        String[] columnNames = cursor.getColumnNames();
+        cursor.moveToFirst();
+        int position = cursor.getPosition();
+        String columnValue = "";
+        if(count == 1 && position == 0){
+            columnValue = cursor.getString(cursor.getColumnIndex("display_name"));
         }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        cursor.close();
+        return columnValue;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        if(menu.findItem(R.id.action_new_deck) != null) {
-            menu.findItem(R.id.action_new_deck).setVisible(!drawerOpen);
-        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -124,12 +85,6 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if(mDrawerToggle.onOptionsItemSelected(item)){
-            return true;
-        }
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -137,49 +92,6 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener{
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-    private void selectItem(int position){
-        Fragment fragment;
-        FragmentManager fragmentManager = getFragmentManager();
-        switch(position){
-            case NAV_ALL_DECKS:
-                fragment = new DecksFragment();
-                break;
-            case NAV_COLLAB_STUDY:
-                fragment = new GameOptionsFragment();
-                break;
-            case NAV_BACKUP:
-                fragment = new BackupFragment();
-                break;
-            case NAV_SEARCH:
-                fragment = new SearchFragment();
-                break;
-            case NAV_IMPORT:
-                fragment = new ImportExportFragment();
-                break;
-            case NAV_USER_PERFORMANCE:
-                fragment = new UserPerformanceFragment();
-                break;
-            default:
-                fragment = null;
-                break;
-        }
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
-
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mNavItems[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
